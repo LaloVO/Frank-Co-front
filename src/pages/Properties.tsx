@@ -1,207 +1,239 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import Map from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { LanguageToggle } from "@/components/LanguageToggle";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+    Building2,
+    Search,
+    MapPin,
+    User,
+    Bell,
+    Bookmark,
+    ChevronDown,
+    X,
+    Plus,
+    Minus,
+    LocateFixed,
+    Layers,
+    Pencil,
+    Menu,
+    Apartment
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
 const Properties = () => {
-    const navigate = useNavigate();
-    const { t } = useTranslation();
-    const [isDarkMode, setIsDarkMode] = useState(true);
-    const [viewState, setViewState] = useState({
-        longitude: -80.19179,
-        latitude: 25.76168,
-        zoom: 12
-    });
+    const [activeProperty, setActiveProperty] = useState<number | null>(null);
 
-    useEffect(() => {
-        document.title = "Property Search Map View";
-
-        // Initial theme check
-        setIsDarkMode(document.documentElement.classList.contains("dark"));
-
-        // Listen for theme changes
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === "class") {
-                    setIsDarkMode(document.documentElement.classList.contains("dark"));
-                }
-            });
-        });
-
-        observer.observe(document.documentElement, { attributes: true });
-        return () => observer.disconnect();
-    }, []);
+    const properties = [
+        {
+            id: 1,
+            name: "The Kensington Lofts",
+            address: "142 Kensington High St, London",
+            price: "$1,200,000",
+            size: "2,400 sqft",
+            priceSqft: "$500/sqft",
+            yield: "4.5% Yield",
+            type: "Resi",
+            image: "https://images.unsplash.com/photo-1600596542815-e32870110044?q=80&w=800&auto=format&fit=crop"
+        },
+        {
+            id: 2,
+            name: "Financial District Office",
+            address: "88 Wall St, New York",
+            price: "$3,500,000",
+            size: "5,500 sqft",
+            priceSqft: "$636/sqft",
+            yield: "6.1% Yield",
+            type: "Comm",
+            exclusive: true,
+            image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=800&auto=format&fit=crop"
+        },
+        {
+            id: 3,
+            name: "Harbor View Complex",
+            address: "200 Bay St, Toronto",
+            price: "$8,500,000",
+            size: "24 Units",
+            priceSqft: "Fully Leased",
+            yield: "5.8% Yield",
+            type: "Multi",
+            image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=800&auto=format&fit=crop"
+        }
+    ];
 
     return (
-        <div className="bg-white dark:bg-[#0f0f0f] text-[#111] dark:text-white font-display h-screen flex flex-col overflow-hidden transition-colors duration-500">
+        <div className="flex flex-col h-screen bg-white text-[#231f20] overflow-hidden">
             {/* Top Navigation Bar */}
-            <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-[#333333] bg-white dark:bg-[#141414] px-6 py-3 z-20 shrink-0 transition-colors duration-500">
-                <div className="flex items-center gap-4 text-[#111] dark:text-white cursor-pointer" onClick={() => navigate("/")}>
-                    <div className="size-8 flex items-center justify-center text-[#e0a929]">
-                        <span className="material-symbols-outlined" style={{ fontSize: "32px" }}>
-                            domain
-                        </span>
+            <header className="flex shrink-0 items-center justify-between bg-[#002d43] px-6 py-3 z-50 shadow-md">
+                <Link to="/" className="flex items-center gap-4 text-white hover:opacity-90 transition-opacity">
+                    <div className="size-8 flex items-center justify-center bg-white/10 rounded-lg text-[#867027]">
+                        <Building2 className="size-5" />
                     </div>
-                    <h2 className="text-[#111] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Homepty</h2>
-                </div>
+                    <h2 className="text-xl font-bold tracking-tight uppercase">Premium <span className="text-[#867027]">Estates</span></h2>
+                </Link>
+
                 <div className="flex flex-1 justify-end gap-8">
-                    <div className="hidden md:flex items-center gap-9">
-                        <span className="text-gray-500 dark:text-gray-300 hover:text-[#e0a929] transition-colors text-sm font-medium leading-normal cursor-pointer" onClick={() => navigate("/propiedades")}>
-                            {t('nav.properties')}
-                        </span>
-                        <span className="text-gray-500 dark:text-gray-300 hover:text-[#e0a929] transition-colors text-sm font-medium leading-normal cursor-pointer" onClick={() => navigate("/hub")}>
-                            {t('nav.hub')}
-                        </span>
-                        <a className="text-gray-500 dark:text-gray-300 hover:text-[#e0a929] transition-colors text-sm font-medium leading-normal" href="#">
-                            {t('nav.agents')}
-                        </a>
-                        <a className="text-gray-500 dark:text-gray-300 hover:text-[#e0a929] transition-colors text-sm font-medium leading-normal" href="#">
-                            {t('nav.about')}
-                        </a>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <ThemeToggle />
-                        <div className="w-px h-6 bg-gray-200 dark:bg-white/10 mx-1"></div>
-                        <LanguageToggle />
-                        <button className="flex items-center justify-center gap-2 text-sm font-bold text-[#e0a929] hover:text-[#c99520] transition-colors">
-                            <span className="material-symbols-outlined text-lg">favorite</span>
+                    <nav className="hidden md:flex items-center gap-9">
+                        <Link to="/propiedades" className="text-white/90 hover:text-[#867027] text-sm font-medium transition-colors">Marketplace</Link>
+                        <Link to="/listings" className="text-white/70 hover:text-[#867027] text-sm font-medium transition-colors">Portfolio</Link>
+                        <Link to="/listings" className="text-white/70 hover:text-[#867027] text-sm font-medium transition-colors">Insights</Link>
+                    </nav>
+
+                    <div className="flex gap-3">
+                        <Button className="bg-[#867027] hover:bg-[#8f7927] text-white font-bold h-9">
+                            Connect
+                        </Button>
+                        <button className="flex size-9 items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
+                            <Bell className="size-5" />
                         </button>
-                        <div
-                            className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-gray-200 dark:border-[#333333]"
-                            style={{
-                                backgroundImage:
-                                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCGhAZyaSW4HGQmJO3o7KJoWMG6H7B1-N6LM_JvoclwjPACYj6eedcDFPe6hF3RHamBdqTFfYK0a1zm1WIJQwYPgWYnIrq3rAANDu2lLz8BbC6ZimpFhXGWTr37uTrl2x_30N8InYMuLVonoBvNwRLQYS8FtF3LvKm6XaKLJTdWTPd4WFwr7muAPdLhQtwmMiUYX0wpO-ORzJ3gaZf2DlW9g729m8gedWe-0jg_MMxojLH20fENWkNeuZXy1Vb5X3MkbEKbNQjz0vU")',
-                            }}
-                        ></div>
+                        <button className="flex size-9 items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
+                            <User className="size-5" />
+                        </button>
                     </div>
                 </div>
             </header>
 
-            {/* Main Content Split View */}
+            {/* Main Content Area */}
             <div className="flex flex-1 overflow-hidden relative">
-                {/* Left Panel: Property List (40%) */}
-                <div className="w-full lg:w-[40%] flex flex-col bg-gray-50 dark:bg-[#0f0f0f] border-r border-gray-200 dark:border-[#333333] overflow-hidden relative z-10 shadow-2xl transition-colors duration-500">
-                    {/* Sticky Filters Header */}
-                    <div className="shrink-0 p-4 border-b border-gray-200 dark:border-[#333333] bg-white/80 dark:bg-[#141414]/95 backdrop-blur-sm z-10 sticky top-0 transition-colors duration-500">
-                        <div className="flex gap-3 flex-wrap">
-                            <button className="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] hover:border-[#e0a929]/50 transition-colors pl-4 pr-3 group">
-                                <p className="text-gray-600 dark:text-gray-200 text-sm font-medium">Price Range</p>
-                                <span className="material-symbols-outlined text-gray-400 group-hover:text-[#e0a929] text-lg">
-                                    expand_more
-                                </span>
+                {/* Left Panel: List View */}
+                <aside className="w-full lg:w-[450px] xl:w-[500px] shrink-0 flex flex-col bg-white border-r border-[#f0f3f5] h-full shadow-xl z-20">
+                    {/* Filters Header */}
+                    <div className="flex flex-col border-b border-[#f0f3f5] bg-white sticky top-0 z-30">
+                        <div className="px-5 pt-6 pb-4">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
+                                <Input
+                                    className="pl-10 bg-gray-50 border-gray-200 focus:ring-[#002d43] focus:border-[#002d43]"
+                                    placeholder="City, Zip, or Asset Name"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-2 px-5 pb-5 overflow-x-auto no-scrollbar">
+                            <button className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 px-3 transition-colors text-xs font-semibold">
+                                Price Range <ChevronDown className="size-4 text-gray-400" />
                             </button>
-                            <button className="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] hover:border-[#e0a929]/50 transition-colors pl-4 pr-3 group">
-                                <p className="text-gray-600 dark:text-gray-200 text-sm font-medium">{t('search.property_type')}</p>
-                                <span className="material-symbols-outlined text-gray-400 group-hover:text-[#e0a929] text-lg">
-                                    expand_more
-                                </span>
+                            <button className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 px-3 transition-colors text-xs font-semibold">
+                                Asset Type <ChevronDown className="size-4 text-gray-400" />
                             </button>
-                            <button className="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] hover:border-[#e0a929]/50 transition-colors pl-4 pr-3 group">
-                                <p className="text-gray-600 dark:text-gray-200 text-sm font-medium">Operation</p>
-                                <span className="material-symbols-outlined text-gray-400 group-hover:text-[#e0a929] text-lg">
-                                    expand_more
-                                </span>
-                            </button>
-                            <button className="ml-auto flex h-9 w-9 items-center justify-center rounded-lg bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] hover:bg-[#e0a929]/20 text-gray-400 hover:text-[#e0a929] transition-colors">
-                                <span className="material-symbols-outlined">tune</span>
+                            <button className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-[#867027] bg-[#867027]/5 px-3 text-[#867027] text-xs font-semibold">
+                                Yield {'>'} 5% <X className="size-4" />
                             </button>
                         </div>
-                        <div className="mt-6 mb-2 flex justify-between items-end">
-                            <h3 className="text-[#111] dark:text-white text-2xl font-bold leading-tight">Luxury Homes in Miami</h3>
-                            <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">124 {t('search.search_button')}</span>
+
+                        <div className="flex items-center justify-between px-5 py-3 bg-[#f8fafb] border-t border-[#f0f3f5]">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">32 Properties Found</span>
+                            <div className="flex items-center gap-1 cursor-pointer hover:text-[#002d43] transition-colors">
+                                <span className="text-xs font-bold">Sort: Recommended</span>
+                                <ChevronDown className="size-4" />
+                            </div>
                         </div>
                     </div>
+
                     {/* Scrollable List */}
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 pb-10">
-                            {/* Property Card 1 */}
-                            <div
-                                onClick={() => navigate("/propiedad/1")}
-                                className="group relative flex flex-col rounded-xl bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-transparent hover:border-[#e0a929]/40 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)] overflow-hidden cursor-pointer"
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f8fafb]">
+                        {properties.map((prop) => (
+                            <Link
+                                to={`/propiedad/${prop.id}`}
+                                key={prop.id}
+                                className={`relative flex flex-col bg-white rounded-xl border transition-all cursor-pointer group ${prop.exclusive ? 'border-[#867027]/30 ring-1 ring-[#867027]/10' : 'border-gray-200 shadow-sm hover:shadow-md'}`}
                             >
-                                <div className="relative aspect-[4/3] w-full overflow-hidden">
-                                    <div
-                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                        style={{
-                                            backgroundImage:
-                                                'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDCLrGRC0I0iHzRNP69u1gPne7k13RKAnKSI6R29lNoMD3_x_hXaVd14HXzcqojIubEYUr8I-03iZlHRqAvR07MNvDOQbas-MTK6N71z_cetwk_mITJ9ahI3tSWQK-0AVN9FB3OWczssLuAItZw75yKZnSFjjqFn-9mdVKRyJEk9UyKC5Is3az_eUkmSrNZQATp59F-LN24cHblcOBLsS6jm6vjf1uhci1_CS7Yh7lpmjkiudejcNAd9XUn_YIVNLgeYdMOZe7BHlI")',
-                                        }}
-                                    ></div>
-                                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white uppercase tracking-wider border border-white/10">
-                                        {t('properties.featured')}
+                                {prop.exclusive && (
+                                    <div className="absolute top-0 right-0 bg-[#867027] text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg rounded-tr-xl z-10 tracking-widest uppercase">
+                                        EXCLUSIVE
                                     </div>
-                                    {/* WhatsApp Button */}
-                                    <button
-                                        className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-[#25D366] hover:border-[#25D366] transition-all duration-300 z-10 shadow-lg"
-                                        title="Contact on WhatsApp"
-                                    >
-                                        <span className="material-symbols-outlined text-[18px]">chat</span>
-                                    </button>
-                                </div>
-                                <div className="p-4 flex flex-col gap-2">
-                                    <div className="flex justify-between items-start">
-                                        <h3 className="text-[#111] dark:text-white font-bold text-lg group-hover:text-[#e0a929] transition-colors">
-                                            $5,400,000
-                                        </h3>
-                                        <div className="flex items-center gap-1 text-[#e0a929] text-xs font-bold border border-[#e0a929]/20 bg-[#e0a929]/10 px-2 py-1 rounded">
-                                            {t('properties.for_sale')}
+                                )}
+                                <div className="p-4 flex gap-4">
+                                    <div className="relative w-32 h-24 shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                                        <img src={prop.image} alt={prop.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] font-bold text-[#002d43] uppercase">
+                                            {prop.type}
                                         </div>
                                     </div>
-                                    <p className="text-gray-400 text-sm truncate">123 Ocean Drive, Miami Beach, FL</p>
-                                    <div className="h-px bg-[#333333] my-1 w-full"></div>
-                                    <div className="flex items-center justify-between text-gray-400 text-xs mt-1">
-                                        <span className="flex items-center gap-1.5">
-                                            <span className="material-symbols-outlined text-[#e0a929] text-[16px]">bed</span>{" "}
-                                            <span className="font-medium text-gray-300">4 {t('properties.beds')}</span>
-                                        </span>
-                                        <span className="flex items-center gap-1.5">
-                                            <span className="material-symbols-outlined text-[#e0a929] text-[16px]">bathtub</span>{" "}
-                                            <span className="font-medium text-gray-300">5 {t('properties.baths')}</span>
-                                        </span>
-                                        <span className="flex items-center gap-1.5">
-                                            <span className="material-symbols-outlined text-[#e0a929] text-[16px]">square_foot</span>{" "}
-                                            <span className="font-medium text-gray-300">3,200 {t('properties.sqft')}</span>
-                                        </span>
+                                    <div className="flex flex-col flex-1 justify-between py-0.5">
+                                        <div>
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="text-[#002d43] text-sm font-bold leading-tight group-hover:text-[#867027] transition-colors">{prop.name}</h3>
+                                                <button className="text-gray-400 hover:text-[#867027] transition-colors">
+                                                    <Bookmark className="size-4" />
+                                                </button>
+                                            </div>
+                                            <p className="text-gray-500 text-[10px] mt-1 flex items-center gap-1">
+                                                <MapPin className="size-3" /> {prop.address}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-end justify-between mt-2">
+                                            <div>
+                                                <p className="text-base font-extrabold text-[#143f61]">{prop.price}</p>
+                                                <p className="text-[10px] text-gray-400 font-medium">{prop.size} • {prop.priceSqft}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs font-bold text-[#867027]">{prop.yield}</p>
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Proj. ROI</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+
+                        <div className="pt-6 pb-8 text-center">
+                            <button className="text-xs font-bold text-[#002d43] hover:text-[#867027] transition-colors flex items-center justify-center gap-1 mx-auto">
+                                Load More Properties <ChevronDown className="size-4" />
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+
+                {/* Right Panel: Map View */}
+                <section className="flex-1 bg-slate-100 relative h-full">
+                    {/* Placeholder for Map */}
+                    <div className="w-full h-full bg-[#eef2f5] flex items-center justify-center relative overflow-hidden">
+                        {/* Simulation of a Map with some markers */}
+                        <div className="absolute inset-0 opacity-20 bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=40.7128,-74.0060&zoom=13&size=1200x800&key=')] bg-cover" />
+
+                        {/* Map Controls */}
+                        <div className="absolute top-6 right-6 flex flex-col gap-2">
+                            <button className="size-10 bg-white rounded-lg shadow-lg hover:bg-gray-50 flex items-center justify-center text-[#002d43] transition-all">
+                                <Plus className="size-5" />
+                            </button>
+                            <button className="size-10 bg-white rounded-lg shadow-lg hover:bg-gray-50 flex items-center justify-center text-[#002d43] transition-all">
+                                <Minus className="size-5" />
+                            </button>
+                            <button className="size-10 mt-4 bg-white rounded-lg shadow-lg hover:bg-gray-50 flex items-center justify-center text-[#002d43] transition-all">
+                                <LocateFixed className="size-5" />
+                            </button>
+                            <button className="size-10 bg-white rounded-lg shadow-lg hover:bg-gray-50 flex items-center justify-center text-[#002d43] transition-all">
+                                <Layers className="size-5" />
+                            </button>
+                        </div>
+
+                        {/* Custom Markers */}
+                        <div className="absolute top-[40%] left-[45%] group cursor-pointer z-30">
+                            <div className="relative flex flex-col items-center">
+                                <div className="bg-[#867027] text-white text-sm font-bold px-3 py-1.5 rounded-lg shadow-xl flex items-center gap-1 ring-4 ring-white/30 transform hover:scale-110 transition-all">
+                                    <span>$3.5M</span>
+                                </div>
+                                <div className="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-[#867027] -mt-[1px]"></div>
+
+                                {/* Tooltip on Map */}
+                                <div className="absolute bottom-full mb-4 w-60 bg-white rounded-xl shadow-2xl p-3 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 pointer-events-none">
+                                    <div className="w-full h-24 bg-cover bg-center rounded-lg mb-3" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=400&auto=format&fit=crop')" }}></div>
+                                    <h4 className="font-bold text-[#002d43] text-sm mb-1">Financial District Office</h4>
+                                    <div className="flex justify-between items-center text-[10px]">
+                                        <span className="text-gray-500 font-medium">5,500 sqft</span>
+                                        <span className="text-[#867027] font-bold">6.1% Yield</span>
                                     </div>
                                 </div>
                             </div>
-                            {/* More cards can be added here following the same structure */}
+                        </div>
+
+                        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-[#002d43] text-white rounded-full shadow-2xl px-6 py-3 flex items-center gap-3 cursor-pointer hover:bg-[#867027] transition-all transform hover:-translate-y-1">
+                            <Pencil className="size-5" />
+                            <span className="text-sm font-bold uppercase tracking-widest">Draw Search Area</span>
                         </div>
                     </div>
-                </div>
-
-                {/* Right Panel: Map View (60%) */}
-                <div className="hidden lg:block lg:w-[60%] h-full bg-gray-100 dark:bg-[#111] relative overflow-hidden transition-colors duration-500">
-                    <Map
-                        {...viewState}
-                        onMove={(evt) => setViewState(evt.viewState)}
-                        style={{ width: "100%", height: "100%" }}
-                        mapStyle={isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11"}
-                        mapboxAccessToken="pk.eyJ1IjoibGFsb3ZvIiwiYSI6ImNtNW5waGY1bzAydDMybXB4OGs0cjN2eDEifQ.k-fNf2JpL5mC_M9_u2v0zA"
-                    />
-                    {/* Floating Search Area Button */}
-                    <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">
-                        <button className="flex items-center gap-2 bg-white/90 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] text-[#111] dark:text-white px-4 py-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-white dark:hover:text-black transition-all font-medium text-sm">
-                            <span className="material-symbols-outlined text-base">refresh</span>
-                            Search this area
-                        </button>
-                    </div>
-                    {/* Map Controls */}
-                    <div className="absolute bottom-8 right-8 flex flex-col gap-2 z-10">
-                        <button className="bg-white/90 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] text-[#111] dark:text-white p-2 rounded-lg hover:bg-[#e0a929]/10 transition-colors shadow-lg">
-                            <span className="material-symbols-outlined block">add</span>
-                        </button>
-                        <button className="bg-white/90 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] text-[#111] dark:text-white p-2 rounded-lg hover:bg-[#e0a929]/10 transition-colors shadow-lg">
-                            <span className="material-symbols-outlined block">remove</span>
-                        </button>
-                        <button className="bg-white/90 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333333] text-[#111] dark:text-white p-2 rounded-lg hover:bg-[#e0a929]/10 transition-colors shadow-lg mt-2">
-                            <span className="material-symbols-outlined block">my_location</span>
-                        </button>
-                    </div>
-                </div>
+                </section>
             </div>
         </div>
     );
