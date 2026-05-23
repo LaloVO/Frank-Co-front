@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Building2,
   Search,
@@ -24,25 +24,34 @@ import type { MapProperty } from '@/components/map/PropertyMap';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
+const operacionMap: Record<string, number> = { venta: 1, renta: 2, preventa: 4 };
+
 const Properties = () => {
-  const [search, setSearch] = useState('');
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(() => searchParams.get('ubicacion') ?? '');
   const { properties, isLoading } = useProperties({ limit: 100 });
   const { site } = useSiteUser();
 
   const mapboxToken = site?.platform_config?.mapbox_token ?? '';
 
+  const urlTipo = searchParams.get('tipo') ?? '';
+  const urlOperacion = searchParams.get('operacion') ?? '';
+  const urlLat = searchParams.get('lat');
+  const urlLng = searchParams.get('lng');
+  const initialCenter = urlLat && urlLng ? { lat: parseFloat(urlLat), lng: parseFloat(urlLng) } : undefined;
+
   const filtered = useMemo(() => {
-    if (!search) return properties;
-    const q = search.toLowerCase();
-    return properties.filter(
-      (p) =>
-        p.nombre.toLowerCase().includes(q) ||
-        (p.ciudad_nombre ?? '').toLowerCase().includes(q) ||
-        (p.colonia ?? '').toLowerCase().includes(q) ||
-        (p.estado_nombre ?? '').toLowerCase().includes(q)
-    );
-  }, [properties, search]);
+    return properties.filter((p) => {
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        const haystack = `${p.nombre} ${p.ciudad_nombre ?? ''} ${p.colonia ?? ''} ${p.estado_nombre ?? ''}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      if (urlTipo && p.tipo?.toLowerCase() !== urlTipo) return false;
+      if (urlOperacion && operacionMap[urlOperacion] && p.id_tipo_accion !== operacionMap[urlOperacion]) return false;
+      return true;
+    });
+  }, [properties, search, urlTipo, urlOperacion]);
 
   const mapProperties = useMemo<MapProperty[]>(
     () =>
@@ -72,7 +81,7 @@ const Properties = () => {
             <Building2 className="size-5" />
           </div>
           <h2 className="text-xl font-bold tracking-tight uppercase">
-            {site?.site_name ?? 'Frank Co'} <span className="text-[#867027]">Asesores</span>
+            {site?.site_name ? <>{site.site_name}</> : <>Frank Co <span className="text-[#867027]">Asesores</span></>}
           </h2>
         </Link>
 
@@ -111,19 +120,24 @@ const Properties = () => {
             </div>
 
             <div className="flex gap-2 px-5 pb-5 overflow-x-auto no-scrollbar">
-              <button className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 px-3 transition-colors text-xs font-semibold">
-                Precio <ChevronDown className="size-4 text-gray-400" />
-              </button>
-              <button className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 px-3 transition-colors text-xs font-semibold">
-                Tipo <ChevronDown className="size-4 text-gray-400" />
-              </button>
-              {activeFilter && (
-                <button
-                  onClick={() => setActiveFilter(null)}
+              {urlOperacion && (
+                <Link
+                  to={`/propiedades?${new URLSearchParams([...Array.from(searchParams.entries())].filter(([k]) => k !== 'operacion')).toString()}`}
+                  className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-[#002d43] bg-[#002d43]/5 px-3 text-[#002d43] text-xs font-semibold"
+                >
+                  {urlOperacion === 'venta' ? 'Comprar' : urlOperacion === 'renta' ? 'Rentar' : 'Pre-Venta'} <X className="size-4" />
+                </Link>
+              )}
+              {urlTipo && (
+                <Link
+                  to={`/propiedades?${new URLSearchParams([...Array.from(searchParams.entries())].filter(([k]) => k !== 'tipo')).toString()}`}
                   className="flex h-8 shrink-0 items-center gap-2 rounded-lg border border-[#867027] bg-[#867027]/5 px-3 text-[#867027] text-xs font-semibold"
                 >
-                  {activeFilter} <X className="size-4" />
-                </button>
+                  {urlTipo.charAt(0).toUpperCase() + urlTipo.slice(1)} <X className="size-4" />
+                </Link>
+              )}
+              {!urlOperacion && !urlTipo && (
+                <span className="flex h-8 shrink-0 items-center px-3 text-xs text-gray-400">Sin filtros activos</span>
               )}
             </div>
 
@@ -201,7 +215,7 @@ const Properties = () => {
 
         {/* Mapa */}
         <section className="flex-1 relative h-full">
-          <PropertyMap properties={mapProperties} mapboxToken={mapboxToken} />
+          <PropertyMap properties={mapProperties} mapboxToken={mapboxToken} initialCenter={initialCenter} />
         </section>
       </div>
     </div>

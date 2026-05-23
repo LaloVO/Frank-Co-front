@@ -20,9 +20,10 @@ export interface MapProperty {
 interface PropertyMapProps {
   properties: MapProperty[];
   mapboxToken: string;
+  initialCenter?: { lat: number; lng: number };
 }
 
-const PropertyMap = ({ properties, mapboxToken }: PropertyMapProps) => {
+const PropertyMap = ({ properties, mapboxToken, initialCenter }: PropertyMapProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -131,6 +132,14 @@ const PropertyMap = ({ properties, mapboxToken }: PropertyMapProps) => {
         map.flyTo({
           center: [properties[0].coordinates.lng, properties[0].coordinates.lat],
           zoom: 13,
+          duration: 900,
+        });
+      } else if (initialCenter) {
+        boundsFitRef.current = true;
+        map.flyTo({
+          center: [initialCenter.lng, initialCenter.lat],
+          zoom: 13,
+          duration: 900,
         });
       }
     };
@@ -140,7 +149,7 @@ const PropertyMap = ({ properties, mapboxToken }: PropertyMapProps) => {
     } else {
       map.once('load', renderMarkers);
     }
-  }, [properties]);
+  }, [properties, initialCenter]);
 
   return (
     <div className="relative w-full h-full">

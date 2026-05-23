@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Building2,
   Search,
@@ -25,9 +25,94 @@ import { formatPrice, actionLabel } from '@/lib/cbf';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
+const HERO_IMAGES = [
+  'https://images.unsplash.com/photo-1600596542815-e32870110044?q=80&w=2500&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2500&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=2500&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2500&auto=format&fit=crop',
+];
+
+const operacionMap: Record<string, number> = { venta: 1, renta: 2, preventa: 4 };
+
 const Index = () => {
+  const navigate = useNavigate();
   const { properties, isLoading } = useProperties({ limit: 4 });
   const { user, site } = useSiteUser();
+
+  const [heroLocation, setHeroLocation] = useState('');
+  const [heroOperation, setHeroOperation] = useState('venta');
+  const [heroType, setHeroType] = useState('');
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number; name: string } | null>(null);
+
+  const mapboxToken = (site?.platform_config?.mapbox_token ?? import.meta.env.VITE_MAPBOX_TOKEN ?? '').trim();
+
+  // Cierra sugerencias al hacer click fuera
+  useEffect(() => {
+    const close = () => setShowSuggestions(false);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, []);
+
+  // Fetch sugerencias con debounce mientras escribe
+  useEffect(() => {
+    if (!heroLocation.trim() || !mapboxToken) { setSuggestions([]); return; }
+    if (selectedCoords && heroLocation === selectedCoords.name) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(heroLocation)}.json?access_token=${mapboxToken}&limit=5&types=neighborhood,locality,place,address&country=mx`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setSuggestions(data.features ?? []);
+          setShowSuggestions(true);
+        }
+      } catch (_) {}
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [heroLocation, mapboxToken, selectedCoords]);
+
+  const handleSuggestionClick = (feature: any) => {
+    const [lng, lat] = feature.center;
+    setHeroLocation(feature.place_name);
+    setSelectedCoords({ lat, lng, name: feature.place_name });
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  const handleHeroSearch = async () => {
+    const params = new URLSearchParams();
+    const loc = heroLocation.trim();
+    if (loc) params.set('ubicacion', loc);
+    if (heroOperation) params.set('operacion', heroOperation);
+    if (heroType) params.set('tipo', heroType);
+
+    if (selectedCoords) {
+      params.set('lat', String(selectedCoords.lat));
+      params.set('lng', String(selectedCoords.lng));
+    } else if (loc && mapboxToken) {
+      try {
+        const res = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(loc)}.json?access_token=${mapboxToken}&limit=1&country=mx`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          const feature = data.features?.[0];
+          if (feature) {
+            const [lng, lat] = feature.center;
+            params.set('lat', String(lat));
+            params.set('lng', String(lng));
+          }
+        }
+      } catch (_) {}
+    }
+
+    navigate(`/propiedades?${params.toString()}`);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#f5f7f8] font-sans">
@@ -36,7 +121,7 @@ const Index = () => {
         <Link to="/" className="flex items-center gap-2">
           <Building2 className="size-8 text-[#002d43]" />
           <h2 className="text-[#002d43] text-xl font-bold uppercase tracking-tight">
-            {site?.site_name ?? 'Frank Co'} <span className="text-[#867027]">Asesores</span>
+            {site?.site_name ? <>{site.site_name}</> : <>Frank Co <span className="text-[#867027]">Asesores</span></>}
           </h2>
         </Link>
 
@@ -69,11 +154,14 @@ const Index = () => {
 
       <main className="flex-grow">
         {/* Hero */}
-        <section className="relative h-[650px] md:h-[800px] flex items-center justify-center overflow-hidden">
-          <div className="hero-bg absolute inset-0 z-0 bg-gray-200" />
-          <div className="absolute inset-0 bg-[#002d43]/40 z-0" />
+        <section className="relative h-[650px] md:h-[800px] flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2500&auto=format&fit=crop')` }}
+          />
+          <div className="absolute inset-0 bg-[#002d43]/40 z-[1]" />
 
-          <div className="relative z-10 w-full max-w-7xl px-4 md:px-10 flex flex-col items-center gap-8 text-center pt-20">
+          <div className="relative z-[2] w-full max-w-7xl px-4 md:px-10 flex flex-col items-center gap-8 text-center pt-20">
             <h1 className="text-white text-4xl md:text-7xl font-extrabold tracking-tight drop-shadow-lg">
               Invierte en tu <span className="text-[#867027]">Legado</span>
             </h1>
@@ -85,36 +173,72 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div className="flex flex-col gap-2 text-left">
                   <span className="text-[#002d43] text-xs font-bold uppercase tracking-wider">Ubicación</span>
-                  <select className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm w-full">
-                    <option>Polanco, CDMX</option>
-                    <option>Lomas de Chapultepec</option>
-                    <option>Santa Fe</option>
-                    <option>San Pedro Garza García</option>
-                  </select>
+                  <div className="relative" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="text"
+                      placeholder="Ciudad, colonia o estado"
+                      value={heroLocation}
+                      onChange={(e) => {
+                        setHeroLocation(e.target.value);
+                        if (selectedCoords && e.target.value !== selectedCoords.name) setSelectedCoords(null);
+                      }}
+                      onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleHeroSearch(); }}
+                      className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm w-full focus:outline-none focus:border-[#002d43]"
+                    />
+                    {showSuggestions && suggestions.length > 0 && (
+                      <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-[200] max-h-56 overflow-y-auto">
+                        {suggestions.map((s) => (
+                          <li key={s.id}>
+                            <button
+                              type="button"
+                              onClick={() => handleSuggestionClick(s)}
+                              className="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-[#002d43] hover:text-white transition-colors border-b border-gray-100 last:border-0 flex items-start gap-2"
+                            >
+                              <MapPin className="size-3 mt-0.5 shrink-0 text-[#867027]" />
+                              <span>{s.place_name}</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
                 <div className="flex flex-col gap-2 text-left">
                   <span className="text-[#002d43] text-xs font-bold uppercase tracking-wider">Operación</span>
-                  <select className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm w-full">
-                    <option>Comprar</option>
-                    <option>Rentar</option>
-                    <option>Pre-Venta</option>
+                  <select
+                    value={heroOperation}
+                    onChange={(e) => setHeroOperation(e.target.value)}
+                    className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm w-full focus:outline-none focus:border-[#002d43]"
+                  >
+                    <option value="venta">Comprar</option>
+                    <option value="renta">Rentar</option>
+                    <option value="preventa">Pre-Venta</option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-2 text-left">
                   <span className="text-[#002d43] text-xs font-bold uppercase tracking-wider">Tipo</span>
-                  <select className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm w-full">
-                    <option>Penthouse</option>
-                    <option>Casa</option>
-                    <option>Departamento</option>
-                    <option>Comercial</option>
+                  <select
+                    value={heroType}
+                    onChange={(e) => setHeroType(e.target.value)}
+                    className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm w-full focus:outline-none focus:border-[#002d43]"
+                  >
+                    <option value="">Cualquier tipo</option>
+                    <option value="casa">Casa</option>
+                    <option value="departamento">Departamento</option>
+                    <option value="terreno">Terreno</option>
+                    <option value="oficina">Oficina</option>
+                    <option value="local">Local Comercial</option>
+                    <option value="bodega">Bodega</option>
                   </select>
                 </div>
-                <Link to="/propiedades">
-                  <Button className="h-[46px] bg-[#002d43] hover:bg-[#867027] text-white font-bold gap-2 w-full">
-                    <Search className="size-5" />
-                    Buscar
-                  </Button>
-                </Link>
+                <Button
+                  onClick={handleHeroSearch}
+                  className="h-[46px] bg-[#002d43] hover:bg-[#867027] text-white font-bold gap-2 w-full"
+                >
+                  <Search className="size-5" />
+                  Buscar
+                </Button>
               </div>
             </div>
           </div>
@@ -300,7 +424,7 @@ const Index = () => {
               <Link to="/" className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
                 <Building2 className="size-6 text-[#867027]" />
                 <span className="text-xl font-bold tracking-tight uppercase text-white">
-                  {site?.site_name ?? 'Frank Co'} <span className="text-[#867027]">Asesores</span>
+                  {site?.site_name ? <>{site.site_name}</> : <>Frank Co <span className="text-[#867027]">Asesores</span></>}
                 </span>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
