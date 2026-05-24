@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { fetchProperty, formatPrice, actionLabel } from '@/lib/cbf';
 import { useSiteUser } from '@/hooks/useSiteUser';
+import { Header } from '@/components/layout/Header';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
@@ -74,20 +75,7 @@ const PropertyDetail = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-[#231f20] font-sans">
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 flex items-center justify-between bg-white px-6 md:px-10 py-4 shadow-sm border-b border-gray-100">
-        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <Building2 className="size-8 text-[#002d43]" />
-          <h2 className="text-[#002d43] text-xl font-bold uppercase tracking-tight">
-            {site?.site_name ?? 'Frank Co'} <span className="text-[#867027]">Asesores</span>
-          </h2>
-        </Link>
-
-        <nav className="hidden lg:flex items-center gap-8">
-          <Link to="/propiedades" className="text-sm font-semibold text-[#002d43] hover:text-[#867027] transition-colors">Propiedades</Link>
-          <Link to="/listings" className="text-sm font-semibold text-[#002d43] hover:text-[#867027] transition-colors">Portafolio</Link>
-        </nav>
-      </header>
+      <Header />
 
       <main className="w-full max-w-7xl mx-auto px-4 md:px-10 py-8">
         {/* Breadcrumbs */}

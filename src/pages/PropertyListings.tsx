@@ -12,6 +12,7 @@ import {
 import { useProperties } from '@/hooks/useProperties';
 import { useSiteUser } from '@/hooks/useSiteUser';
 import { formatPrice, actionLabel } from '@/lib/cbf';
+import { Header } from '@/components/layout/Header';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
@@ -21,24 +22,7 @@ const PropertyListings = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-[#143f61] font-sans">
-      {/* Header */}
-      <header className="bg-[#002d43] text-white w-full shadow-md sticky top-0 z-50">
-        <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-1 hover:text-[#867027] transition-colors">
-              <ChevronLeft className="size-5" />
-              <Building2 className="size-6" />
-            </Link>
-            <h1 className="text-sm md:text-xl font-semibold tracking-tight">
-              Tu propiedad ideal está a un filtro de distancia
-            </h1>
-          </div>
-          <button className="flex items-center gap-2 text-sm font-medium hover:text-gray-200 transition-colors group">
-            Filtrar
-            <SlidersHorizontal className="size-5 group-hover:rotate-180 transition-transform duration-300" />
-          </button>
-        </div>
-      </header>
+      <Header />
 
       {/* Contenido */}
       <main className="w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12">

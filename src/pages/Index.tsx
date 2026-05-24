@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { useProperties } from '@/hooks/useProperties';
 import { useSiteUser } from '@/hooks/useSiteUser';
 import { formatPrice, actionLabel } from '@/lib/cbf';
+import { Header } from '@/components/layout/Header';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
@@ -116,42 +117,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#f5f7f8] font-sans">
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 flex items-center justify-between bg-white/95 border-b border-[#f0f3f5] px-6 md:px-10 py-4 shadow-sm backdrop-blur-md">
-        <Link to="/" className="flex items-center gap-2">
-          <Building2 className="size-8 text-[#002d43]" />
-          <h2 className="text-[#002d43] text-xl font-bold uppercase tracking-tight">
-            {site?.site_name ? <>{site.site_name}</> : <>Frank Co <span className="text-[#867027]">Asesores</span></>}
-          </h2>
-        </Link>
-
-        <nav className="hidden lg:flex items-center gap-8">
-          <a href="#" className="text-sm font-medium text-[#002d43] hover:text-[#867027] transition-colors">Servicios Financieros</a>
-          <Link to="/propiedades" className="text-sm font-medium text-[#002d43] hover:text-[#867027] transition-colors">Propiedades</Link>
-          <Link to="/listings" className="text-sm font-medium text-[#002d43] hover:text-[#867027] transition-colors">Portafolio</Link>
-          <a href="#" className="text-sm font-medium text-[#002d43] hover:text-[#867027] transition-colors">Testimonios</a>
-          <Link to="/solicita-inmueble" className="text-sm font-bold text-white bg-[#867027] hover:bg-[#002d43] px-4 py-2 rounded transition-all">Solicitar Inmueble</Link>
-          {user?.telefono_usuario ? (
-            <a
-              href={`https://wa.me/${user.telefono_usuario.replace(/\D/g, '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="default" className="bg-[#002d43] hover:bg-[#867027] transition-all">
-                Contactar
-              </Button>
-            </a>
-          ) : (
-            <Button variant="default" className="bg-[#002d43] hover:bg-[#867027] transition-all">
-              Contactar
-            </Button>
-          )}
-        </nav>
-
-        <button className="lg:hidden text-[#002d43]">
-          <Menu className="size-8" />
-        </button>
-      </header>
+      <Header />
 
       <main className="flex-grow">
         {/* Hero */}

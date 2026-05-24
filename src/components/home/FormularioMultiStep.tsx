@@ -136,7 +136,7 @@ const step3Schema = z.object({
   estadosDeseados: z.array(z.string()).min(1, "Selecciona al menos un estado de interés"),
   ciudadesDeseadas: z.array(z.string()).optional(),
   zonasEspecificas: z.string().optional(),
-  estiloVidaDescripcion: z.string().min(100, "Describe tu estilo de vida con al menos 100 caracteres para perfilar tu recomendación")
+  estiloVidaDescripcion: z.string().min(10, "Describe tu estilo de vida con al menos 10 caracteres para perfilar tu recomendación")
 });
 
 const step4Schema = z.object({
@@ -174,7 +174,7 @@ const fullSchema = z.object({
   estadosDeseados: z.array(z.string()).min(1, "Selecciona al menos un estado de interés"),
   ciudadesDeseadas: z.array(z.string()).optional(),
   zonasEspecificas: z.string().optional(),
-  estiloVidaDescripcion: z.string().min(100, "La descripción del estilo de vida debe tener al menos 100 caracteres"),
+  estiloVidaDescripcion: z.string().min(10, "La descripción del estilo de vida debe tener al menos 10 caracteres"),
   presupuestoMin: z.string().min(1, "Ingresa el presupuesto mínimo"),
   presupuestoMax: z.string().min(1, "Ingresa el presupuesto máximo"),
   metodoPago: z.array(z.string()).min(1, "Selecciona al menos un método de pago"),
@@ -494,24 +494,24 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                   onClick={() => isClickable && handleStepClick(step.id)}
                   disabled={!isClickable}
                   className={`w-9 h-9 rounded-full border-2 flex items-center justify-center font-sans font-medium text-xs transition-all duration-300
-                    ${isCompleted ? "bg-[#B76E4D] border-[#B76E4D] text-white" : ""}
-                    ${isCurrent && !isCompleted ? "border-[#B76E4D] bg-white text-[#B76E4D] scale-105 shadow-md" : ""}
-                    ${!isCurrent && !isCompleted ? "border-[#6E6259]/30 bg-transparent text-[#6E6259]/50" : ""}
+                    ${isCompleted ? "bg-[#867027] border-[#867027] text-white" : ""}
+                    ${isCurrent && !isCompleted ? "border-[#867027] bg-white text-[#867027] scale-105 shadow-md" : ""}
+                    ${!isCurrent && !isCompleted ? "border-[#4b5563]/30 bg-transparent text-[#4b5563]/50" : ""}
                     ${isClickable ? "cursor-pointer hover:scale-105" : "cursor-not-allowed opacity-40"}
                   `}
                 >
                   {isCompleted ? <Check className="w-4 h-4" /> : step.id}
                 </button>
                 <span className={`text-[10px] md:text-xs mt-1.5 font-sans font-medium hidden md:block
-                  ${isCurrent ? "text-[#2E251E] font-semibold" : "text-[#6E6259]/60"}
+                  ${isCurrent ? "text-[#002d43] font-semibold" : "text-[#4b5563]/60"}
                 `}>
                   {step.title}
                 </span>
               </div>
               {!isLast && (
-                <div className="h-[2px] flex-1 bg-[#6E6259]/20 rounded min-w-[20px]">
+                <div className="h-[2px] flex-1 bg-[#4b5563]/20 rounded min-w-[20px]">
                   <div
-                    className="h-full bg-[#B76E4D] transition-all duration-300 rounded"
+                    className="h-full bg-[#867027] transition-all duration-300 rounded"
                     style={{ width: isCompleted ? "100%" : "0%" }}
                   />
                 </div>
@@ -528,23 +528,23 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
         {currentStep === 1 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl text-[#2E251E] font-medium">Información Personal</h2>
-              <p className="font-sans text-sm text-[#6E6259] mt-2">
+              <h2 className="font-serif text-3xl text-[#002d43] font-medium">Información Personal</h2>
+              <p className="font-sans text-sm text-[#4b5563] mt-2">
                 Comparte tus datos básicos para poder asignarte un asesor boutique y contactarte.
               </p>
             </div>
 
             <div className="space-y-5 max-w-lg mx-auto">
               <div className="space-y-2">
-                <Label htmlFor="nombreCompleto" className="font-sans text-sm font-medium text-[#2E251E] flex items-center gap-2">
-                  <User className="w-4 h-4 text-[#B76E4D]" />
+                <Label htmlFor="nombreCompleto" className="font-sans text-sm font-medium text-[#002d43] flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#867027]" />
                   Nombre Completo *
                 </Label>
                 <Input
                   id="nombreCompleto"
                   placeholder="Ej: Eduardo Valenzuela"
                   {...register("nombreCompleto")}
-                  className={`rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0 ${
+                  className={`rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0 ${
                     errors.nombreCompleto ? "border-red-500" : ""
                   }`}
                 />
@@ -554,8 +554,8 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="font-sans text-sm font-medium text-[#2E251E] flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-[#B76E4D]" />
+                <Label htmlFor="email" className="font-sans text-sm font-medium text-[#002d43] flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-[#867027]" />
                   Correo Electrónico *
                 </Label>
                 <Input
@@ -563,7 +563,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                   type="email"
                   placeholder="ejemplo@correo.com"
                   {...register("email")}
-                  className={`rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0 ${
+                  className={`rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0 ${
                     errors.email ? "border-red-500" : ""
                   }`}
                 />
@@ -573,8 +573,8 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="telefono" className="font-sans text-sm font-medium text-[#2E251E] flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-[#B76E4D]" />
+                <Label htmlFor="telefono" className="font-sans text-sm font-medium text-[#002d43] flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-[#867027]" />
                   Teléfono Móvil *
                 </Label>
                 <Input
@@ -582,7 +582,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                   type="tel"
                   placeholder="5512345678"
                   {...register("telefono")}
-                  className={`rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0 ${
+                  className={`rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0 ${
                     errors.telefono ? "border-red-500" : ""
                   }`}
                 />
@@ -598,8 +598,8 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
         {currentStep === 2 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl text-[#2E251E] font-medium">Características del Inmueble</h2>
-              <p className="font-sans text-sm text-[#6E6259] mt-2">
+              <h2 className="font-serif text-3xl text-[#002d43] font-medium">Características del Inmueble</h2>
+              <p className="font-sans text-sm text-[#4b5563] mt-2">
                 Define el tipo de propiedad que imaginas para tu próximo paso.
               </p>
             </div>
@@ -607,8 +607,8 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
             <div className="space-y-6 max-w-2xl mx-auto">
               {/* Tipo de Operación */}
               <div className="space-y-3">
-                <Label className="font-sans text-sm font-medium text-[#2E251E] flex items-center gap-2">
-                  <Home className="w-4 h-4 text-[#B76E4D]" />
+                <Label className="font-sans text-sm font-medium text-[#002d43] flex items-center gap-2">
+                  <Home className="w-4 h-4 text-[#867027]" />
                   ¿Cuál es tu intención principal? *
                 </Label>
                 <RadioGroup
@@ -622,13 +622,13 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                       htmlFor="compra"
                       className={`flex-1 cursor-pointer border rounded-2xl p-4 flex flex-col justify-between h-20 transition-all duration-300
                         ${watch("tipoOperacion") === "compra" 
-                          ? "bg-white border-[#B76E4D] shadow-elegant scale-[1.02]" 
-                          : "bg-white/40 border-[#6E6259]/10 hover:bg-white/60"
+                          ? "bg-white border-[#867027] shadow-elegant scale-[1.02]" 
+                          : "bg-white/40 border-[#4b5563]/10 hover:bg-white/60"
                         }
                       `}
                     >
-                      <span className="font-sans font-semibold text-sm text-[#2E251E]">Comprar</span>
-                      <span className="text-[10px] text-[#6E6259] mt-1">Adquirir propiedad en patrimonio</span>
+                      <span className="font-sans font-semibold text-sm text-[#002d43]">Comprar</span>
+                      <span className="text-[10px] text-[#4b5563] mt-1">Adquirir propiedad en patrimonio</span>
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2 flex-1">
@@ -637,13 +637,13 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                       htmlFor="renta"
                       className={`flex-1 cursor-pointer border rounded-2xl p-4 flex flex-col justify-between h-20 transition-all duration-300
                         ${watch("tipoOperacion") === "renta" 
-                          ? "bg-white border-[#B76E4D] shadow-elegant scale-[1.02]" 
-                          : "bg-white/40 border-[#6E6259]/10 hover:bg-white/60"
+                          ? "bg-white border-[#867027] shadow-elegant scale-[1.02]" 
+                          : "bg-white/40 border-[#4b5563]/10 hover:bg-white/60"
                         }
                       `}
                     >
-                      <span className="font-sans font-semibold text-sm text-[#2E251E]">Rentar</span>
-                      <span className="text-[10px] text-[#6E6259] mt-1">Arrendamiento de residencia exclusiva</span>
+                      <span className="font-sans font-semibold text-sm text-[#002d43]">Rentar</span>
+                      <span className="text-[10px] text-[#4b5563] mt-1">Arrendamiento de residencia exclusiva</span>
                     </Label>
                   </div>
                 </RadioGroup>
@@ -651,14 +651,14 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
 
               {/* Tipo de Propiedad */}
               <div className="space-y-2">
-                <Label htmlFor="tipoPropiedad" className="font-sans text-sm font-medium text-[#2E251E]">
+                <Label htmlFor="tipoPropiedad" className="font-sans text-sm font-medium text-[#002d43]">
                   Tipo de Propiedad *
                 </Label>
                 <Select
                   onValueChange={(val) => setValue("tipoPropiedad", val)}
                   value={watch("tipoPropiedad")}
                 >
-                  <SelectTrigger className={`rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:ring-0 ${
+                  <SelectTrigger className={`rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:ring-0 ${
                     errors.tipoPropiedad ? "border-red-500" : ""
                   }`}>
                     <SelectValue placeholder="Selecciona el tipo" />
@@ -682,15 +682,15 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
               {/* Cuartos, Baños y Estacionamientos */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label className="font-sans text-xs font-medium text-[#6E6259] flex items-center gap-1.5">
-                    <BedDouble className="w-3.5 h-3.5 text-[#B76E4D]" />
+                  <Label className="font-sans text-xs font-medium text-[#4b5563] flex items-center gap-1.5">
+                    <BedDouble className="w-3.5 h-3.5 text-[#867027]" />
                     Habitaciones
                   </Label>
                   <Select
                     onValueChange={(val) => setValue("numHabitaciones", val)}
                     value={watch("numHabitaciones")}
                   >
-                    <SelectTrigger className="rounded-full bg-white/50 border-[#6E6259]/20">
+                    <SelectTrigger className="rounded-full bg-white/50 border-[#4b5563]/20">
                       <SelectValue placeholder="Cualquiera" />
                     </SelectTrigger>
                     <SelectContent>
@@ -704,15 +704,15 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-sans text-xs font-medium text-[#6E6259] flex items-center gap-1.5">
-                    <Bath className="w-3.5 h-3.5 text-[#B76E4D]" />
+                  <Label className="font-sans text-xs font-medium text-[#4b5563] flex items-center gap-1.5">
+                    <Bath className="w-3.5 h-3.5 text-[#867027]" />
                     Baños
                   </Label>
                   <Select
                     onValueChange={(val) => setValue("numBanos", val)}
                     value={watch("numBanos")}
                   >
-                    <SelectTrigger className="rounded-full bg-white/50 border-[#6E6259]/20">
+                    <SelectTrigger className="rounded-full bg-white/50 border-[#4b5563]/20">
                       <SelectValue placeholder="Cualquiera" />
                     </SelectTrigger>
                     <SelectContent>
@@ -728,15 +728,15 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-sans text-xs font-medium text-[#6E6259] flex items-center gap-1.5">
-                    <Car className="w-3.5 h-3.5 text-[#B76E4D]" />
+                  <Label className="font-sans text-xs font-medium text-[#4b5563] flex items-center gap-1.5">
+                    <Car className="w-3.5 h-3.5 text-[#867027]" />
                     Estacionamientos
                   </Label>
                   <Select
                     onValueChange={(val) => setValue("numEstacionamientos", val)}
                     value={watch("numEstacionamientos")}
                   >
-                    <SelectTrigger className="rounded-full bg-white/50 border-[#6E6259]/20">
+                    <SelectTrigger className="rounded-full bg-white/50 border-[#4b5563]/20">
                       <SelectValue placeholder="Cualquiera" />
                     </SelectTrigger>
                     <SelectContent>
@@ -752,8 +752,8 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
 
               {/* Rango de m2 */}
               <div className="space-y-2">
-                <Label className="font-sans text-sm font-medium text-[#2E251E] flex items-center gap-2">
-                  <Maximize className="w-4 h-4 text-[#B76E4D]" />
+                <Label className="font-sans text-sm font-medium text-[#002d43] flex items-center gap-2">
+                  <Maximize className="w-4 h-4 text-[#867027]" />
                   Rango de Área (Metros Cuadrados)
                 </Label>
                 <div className="grid grid-cols-2 gap-4">
@@ -761,13 +761,13 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                     type="number"
                     placeholder="Mínimo (m²)"
                     {...register("metrosCuadradosMin")}
-                    className="rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0"
+                    className="rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0"
                   />
                   <Input
                     type="number"
                     placeholder="Máximo (m²)"
                     {...register("metrosCuadradosMax")}
-                    className="rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0"
+                    className="rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0"
                   />
                 </div>
               </div>
@@ -779,8 +779,8 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
         {currentStep === 3 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-6">
-              <h2 className="font-serif text-3xl text-[#2E251E] font-medium">Ubicación y Estilo de Vida</h2>
-              <p className="font-sans text-sm text-[#6E6259] mt-2">
+              <h2 className="font-serif text-3xl text-[#002d43] font-medium">Ubicación y Estilo de Vida</h2>
+              <p className="font-sans text-sm text-[#4b5563] mt-2">
                 Define las regiones geográficas y detalla cómo transcurre tu día a día para perfilar tu hogar ideal.
               </p>
             </div>
@@ -788,15 +788,15 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
             <div className="space-y-6 max-w-2xl mx-auto">
               {/* Estados de Interés */}
               <div className="space-y-3">
-                <Label className="font-sans text-sm font-medium text-[#2E251E] flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-[#B76E4D]" />
+                <Label className="font-sans text-sm font-medium text-[#002d43] flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-[#867027]" />
                   Estados de Interés *
                 </Label>
                 <div className="flex gap-2">
                   <select
                     value={estadoSelect}
                     onChange={(e) => setEstadoSelect(e.target.value)}
-                    className="flex-1 h-10 rounded-full border border-[#6E6259]/20 bg-white/50 px-4 py-2 text-sm font-sans focus:bg-white/95 focus:border-[#B76E4D]"
+                    className="flex-1 h-10 rounded-full border border-[#4b5563]/20 bg-white/50 px-4 py-2 text-sm font-sans focus:bg-white/95 focus:border-[#867027]"
                   >
                     <option value="">Selecciona un estado de México</option>
                     {ESTADOS_MEXICO.filter((e) => !estadosDeseados.includes(e)).map((estado) => (
@@ -807,14 +807,14 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                     type="button"
                     onClick={handleAddEstado}
                     disabled={!estadoSelect}
-                    className="rounded-full bg-[#B76E4D] hover:bg-[#9a5435]"
+                    className="rounded-full bg-[#867027] hover:bg-[#6e5a1e]"
                   >
                     Agregar
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2 min-h-[30px]">
                   {estadosDeseados.map((estado: string) => (
-                    <Badge key={estado} variant="secondary" className="rounded-full px-3 py-1 font-sans bg-white border border-[#6E6259]/25 text-[#2E251E] flex items-center gap-1.5">
+                    <Badge key={estado} variant="secondary" className="rounded-full px-3 py-1 font-sans bg-white border border-[#4b5563]/25 text-[#002d43] flex items-center gap-1.5">
                       {estado}
                       <button
                         type="button"
@@ -833,7 +833,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
 
               {/* Ciudades Deseadas */}
               <div className="space-y-3">
-                <Label className="font-sans text-sm font-medium text-[#2E251E]">Ciudades o Municipios Específicos</Label>
+                <Label className="font-sans text-sm font-medium text-[#002d43]">Ciudades o Municipios Específicos</Label>
                 <div className="flex gap-2">
                   <Input
                     value={ciudadInput}
@@ -845,20 +845,20 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                         handleAddCiudad();
                       }
                     }}
-                    className="rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D]"
+                    className="rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027]"
                   />
                   <Button
                     type="button"
                     onClick={handleAddCiudad}
                     disabled={!ciudadInput}
-                    className="rounded-full bg-[#B76E4D] hover:bg-[#9a5435]"
+                    className="rounded-full bg-[#867027] hover:bg-[#6e5a1e]"
                   >
                     Agregar
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2 min-h-[30px]">
                   {ciudadesDeseadas.map((ciudad: string) => (
-                    <Badge key={ciudad} variant="secondary" className="rounded-full px-3 py-1 font-sans bg-white border border-[#6E6259]/25 text-[#2E251E] flex items-center gap-1.5">
+                    <Badge key={ciudad} variant="secondary" className="rounded-full px-3 py-1 font-sans bg-white border border-[#4b5563]/25 text-[#002d43] flex items-center gap-1.5">
                       {ciudad}
                       <button
                         type="button"
@@ -874,24 +874,24 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
 
               {/* Zonas Específicas */}
               <div className="space-y-2">
-                <Label htmlFor="zonasEspecificas" className="font-sans text-sm font-medium text-[#2E251E]">
+                <Label htmlFor="zonasEspecificas" className="font-sans text-sm font-medium text-[#002d43]">
                   Zonas, Colonias o Puntos de Referencia
                 </Label>
                 <Input
                   id="zonasEspecificas"
                   placeholder="Ej: Cerca de Av. Patria o corporativos financieros"
                   {...register("zonasEspecificas")}
-                  className="rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D]"
+                  className="rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027]"
                 />
               </div>
 
               {/* Estilo de Vida (CRÍTICO) */}
-              <div className="space-y-3 bg-[#FAF7F2]/60 border border-[#B76E4D]/25 rounded-2xl p-5 md:p-6 shadow-card">
-                <Label htmlFor="estiloVidaDescripcion" className="font-sans text-[#2E251E] font-medium text-base flex items-center gap-2">
+              <div className="space-y-3 bg-[#f5f7f8]/60 border border-[#867027]/25 rounded-2xl p-5 md:p-6 shadow-card">
+                <Label htmlFor="estiloVidaDescripcion" className="font-sans text-[#002d43] font-medium text-base flex items-center gap-2">
                   <Heart className="w-5 h-5 text-red-500 fill-red-500/20" />
                   Describe tu Estilo de Vida y Necesidades Diarias *
                 </Label>
-                <p className="text-xs text-[#6E6259] leading-relaxed">
+                <p className="text-xs text-[#4b5563] leading-relaxed">
                   Esta descripción es **crucial** para perfilar tu hogar mediante nuestro motor avanzado. 
                   Menciona los miembros de la familia, rutinas de trabajo (home office), escuelas cercanas, mascotas, hobbies y facilidades que requieres.
                 </p>
@@ -900,14 +900,14 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                   rows={6}
                   placeholder="Ej: Somos una pareja de profesionales que trabaja desde casa y tenemos 2 mascotas (perros grandes). Requerimos oficina independiente, un jardín privado, y excelente cobertura de internet. Nos gusta salir a correr al parque los fines de semana..."
                   {...register("estiloVidaDescripcion")}
-                  className={`bg-white/70 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0 rounded-2xl ${
+                  className={`bg-white/70 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0 rounded-2xl ${
                     errors.estiloVidaDescripcion ? "border-red-500" : ""
                   }`}
                 />
-                <div className="flex items-center justify-between text-[11px] text-[#6E6259]">
-                  <span>Mínimo requerido: 100 caracteres.</span>
+                <div className="flex items-center justify-between text-[11px] text-[#4b5563]">
+                  <span>Mínimo requerido: 10 caracteres.</span>
                   <span className={`font-semibold ${
-                    (watch("estiloVidaDescripcion") || "").length >= 100 ? "text-green-600" : "text-amber-600"
+                    (watch("estiloVidaDescripcion") || "").length >= 10 ? "text-green-600" : "text-amber-600"
                   }`}>
                     {(watch("estiloVidaDescripcion") || "").length} caracteres ingresados
                   </span>
@@ -924,32 +924,32 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
         {currentStep === 4 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl text-[#2E251E] font-medium">Presupuesto y Financiamiento</h2>
-              <p className="font-sans text-sm text-[#6E6259] mt-2">
+              <h2 className="font-serif text-3xl text-[#002d43] font-medium">Presupuesto y Financiamiento</h2>
+              <p className="font-sans text-sm text-[#4b5563] mt-2">
                 Delimita tu rango de presupuesto viable y las opciones de financiamiento disponibles.
               </p>
             </div>
 
             <div className="space-y-6 max-w-2xl mx-auto">
               {/* Rango de Presupuesto */}
-              <div className="bg-[#FAF7F2]/60 border border-[#6E6259]/10 rounded-2xl p-5 md:p-6 shadow-card space-y-4">
-                <Label className="font-sans text-base font-semibold text-[#2E251E] flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-[#B76E4D]" />
+              <div className="bg-[#f5f7f8]/60 border border-[#4b5563]/10 rounded-2xl p-5 md:p-6 shadow-card space-y-4">
+                <Label className="font-sans text-base font-semibold text-[#002d43] flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-[#867027]" />
                   Rango de Presupuesto (Pesos Mexicanos MXN) *
                 </Label>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="presupuestoMin" className="font-sans text-xs text-[#6E6259]">Presupuesto Mínimo</Label>
+                    <Label htmlFor="presupuestoMin" className="font-sans text-xs text-[#4b5563]">Presupuesto Mínimo</Label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6259] text-sm">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4b5563] text-sm">$</span>
                       <Input
                         id="presupuestoMin"
                         type="text"
                         placeholder="1,500,000"
                         {...register("presupuestoMin")}
                         onChange={(e) => setValue("presupuestoMin", formatCurrency(e.target.value))}
-                        className={`rounded-full pl-7 bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0 ${
+                        className={`rounded-full pl-7 bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0 ${
                           errors.presupuestoMin ? "border-red-500" : ""
                         }`}
                       />
@@ -960,16 +960,16 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="presupuestoMax" className="font-sans text-xs text-[#6E6259]">Presupuesto Máximo</Label>
+                    <Label htmlFor="presupuestoMax" className="font-sans text-xs text-[#4b5563]">Presupuesto Máximo</Label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6259] text-sm">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#4b5563] text-sm">$</span>
                       <Input
                         id="presupuestoMax"
                         type="text"
                         placeholder="5,000,000"
                         {...register("presupuestoMax")}
                         onChange={(e) => setValue("presupuestoMax", formatCurrency(e.target.value))}
-                        className={`rounded-full pl-7 bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0 ${
+                        className={`rounded-full pl-7 bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0 ${
                           errors.presupuestoMax ? "border-red-500" : ""
                         }`}
                       />
@@ -983,28 +983,28 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
 
               {/* Métodos de Pago */}
               <div className="space-y-3">
-                <Label className="font-sans text-sm font-medium text-[#2E251E] flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-[#B76E4D]" />
+                <Label className="font-sans text-sm font-medium text-[#002d43] flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#867027]" />
                   Métodos de Pago Preferidos *
                 </Label>
                 <div className="space-y-3">
                   {METODOS_PAGO.map((metodo) => (
                     <div
                       key={metodo.id}
-                      className="flex items-start space-x-3 p-4 bg-white/50 border border-[#6E6259]/10 rounded-2xl hover:bg-white transition-colors duration-300 cursor-pointer shadow-card"
+                      className="flex items-start space-x-3 p-4 bg-white/50 border border-[#4b5563]/10 rounded-2xl hover:bg-white transition-colors duration-300 cursor-pointer shadow-card"
                       onClick={() => handleToggleMetodoPago(metodo.id)}
                     >
                       <Checkbox
                         id={metodo.id}
                         checked={metodoPago.includes(metodo.id)}
                         onCheckedChange={() => handleToggleMetodoPago(metodo.id)}
-                        className="mt-0.5 border-[#B76E4D]/40 data-[state=checked]:bg-[#B76E4D] data-[state=checked]:border-[#B76E4D]"
+                        className="mt-0.5 border-[#867027]/40 data-[state=checked]:bg-[#867027] data-[state=checked]:border-[#867027]"
                       />
                       <div className="flex-1">
-                        <Label htmlFor={metodo.id} className="font-sans font-medium text-sm text-[#2E251E] cursor-pointer">
+                        <Label htmlFor={metodo.id} className="font-sans font-medium text-sm text-[#002d43] cursor-pointer">
                           {metodo.label}
                         </Label>
-                        <p className="text-xs text-[#6E6259] mt-0.5">{metodo.description}</p>
+                        <p className="text-xs text-[#4b5563] mt-0.5">{metodo.description}</p>
                       </div>
                     </div>
                   ))}
@@ -1015,13 +1015,13 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
               </div>
 
               {/* Precalificación Crediticia */}
-              <div className="bg-white/40 border border-[#6E6259]/10 rounded-2xl p-5 shadow-card space-y-4">
+              <div className="bg-white/40 border border-[#4b5563]/10 rounded-2xl p-5 shadow-card space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="tienePrecalificacion" className="font-sans font-medium text-[#2E251E]">
+                    <Label htmlFor="tienePrecalificacion" className="font-sans font-medium text-[#002d43]">
                       ¿Cuentas con una Precalificación Crediticia?
                     </Label>
-                    <p className="text-xs text-[#6E6259] mt-0.5">
+                    <p className="text-xs text-[#4b5563] mt-0.5">
                       Tener un crédito pre-aprobado incrementa sustancialmente el interés y seriedad comercial.
                     </p>
                   </div>
@@ -1029,20 +1029,20 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                     id="tienePrecalificacion"
                     checked={watch("tienePrecalificacionCrediticia")}
                     onCheckedChange={(val) => setValue("tienePrecalificacionCrediticia", val)}
-                    className="data-[state=checked]:bg-[#B76E4D]"
+                    className="data-[state=checked]:bg-[#867027]"
                   />
                 </div>
 
                 {watch("tienePrecalificacionCrediticia") && (
                   <div className="space-y-2 animate-slideDown">
-                    <Label htmlFor="institucionCrediticia" className="font-sans text-xs text-[#6E6259]">
+                    <Label htmlFor="institucionCrediticia" className="font-sans text-xs text-[#4b5563]">
                       Institución Crediticia o Banco
                     </Label>
                     <Input
                       id="institucionCrediticia"
                       placeholder="Ej: BBVA, Banorte, Infonavit, etc."
                       {...register("institucionCrediticia")}
-                      className="rounded-full bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D]"
+                      className="rounded-full bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027]"
                     />
                   </div>
                 )}
@@ -1055,15 +1055,15 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
         {currentStep === 5 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl text-[#2E251E] font-medium">Uso del Inmueble</h2>
-              <p className="font-sans text-sm text-[#6E6259] mt-2">
+              <h2 className="font-serif text-3xl text-[#002d43] font-medium">Uso del Inmueble</h2>
+              <p className="font-sans text-sm text-[#4b5563] mt-2">
                 Cuéntanos cuál será el fin comercial o habitacional de la propiedad.
               </p>
             </div>
 
             <div className="space-y-6 max-w-2xl mx-auto">
               <div className="space-y-3">
-                <Label className="font-sans text-sm font-medium text-[#2E251E]">¿Cuál será el uso de destino principal? *</Label>
+                <Label className="font-sans text-sm font-medium text-[#002d43]">¿Cuál será el uso de destino principal? *</Label>
                 <RadioGroup
                   value={watch("usoDestino")}
                   onValueChange={(val) => setValue("usoDestino", val as any)}
@@ -1082,17 +1082,17 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                           htmlFor={opc.id}
                           className={`flex-1 cursor-pointer border rounded-2xl p-4 flex gap-4 items-center transition-all duration-300 shadow-card
                             ${watch("usoDestino") === opc.id
-                              ? "bg-white border-[#B76E4D] scale-[1.01]"
-                              : "bg-white/40 border-[#6E6259]/10 hover:bg-white/60"
+                              ? "bg-white border-[#867027] scale-[1.01]"
+                              : "bg-white/40 border-[#4b5563]/10 hover:bg-white/60"
                             }
                           `}
                         >
-                          <div className="bg-[#FAF7F2] p-2.5 rounded-xl border border-[#6E6259]/10 text-[#B76E4D]">
+                          <div className="bg-[#f5f7f8] p-2.5 rounded-xl border border-[#4b5563]/10 text-[#867027]">
                             <Icon className="w-5 h-5" />
                           </div>
                           <div>
-                            <span className="font-sans font-semibold text-sm text-[#2E251E]">{opc.label}</span>
-                            <span className="block text-[11px] text-[#6E6259] mt-0.5">{opc.description}</span>
+                            <span className="font-sans font-semibold text-sm text-[#002d43]">{opc.label}</span>
+                            <span className="block text-[11px] text-[#4b5563] mt-0.5">{opc.description}</span>
                           </div>
                         </Label>
                       </div>
@@ -1106,7 +1106,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
 
               {/* Detalles del Uso */}
               <div className="space-y-2">
-                <Label htmlFor="detallesUso" className="font-sans text-sm font-medium text-[#2E251E]">
+                <Label htmlFor="detallesUso" className="font-sans text-sm font-medium text-[#002d43]">
                   Detalles Adicionales del Uso (opcional)
                 </Label>
                 <Textarea
@@ -1114,7 +1114,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                   rows={4}
                   placeholder="Ej: Planeo habitarlo junto a mi familia, pero deseamos que tenga opción de renta parcial a estudiantes..."
                   {...register("detallesUso")}
-                  className="bg-white/50 border-[#6E6259]/20 focus:bg-white/95 focus:border-[#B76E4D] focus:ring-0 rounded-2xl"
+                  className="bg-white/50 border-[#4b5563]/20 focus:bg-white/95 focus:border-[#867027] focus:ring-0 rounded-2xl"
                 />
               </div>
             </div>
@@ -1125,16 +1125,16 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
         {currentStep === 6 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl text-[#2E251E] font-medium">Expediente de Documentos</h2>
-              <p className="font-sans text-sm text-[#6E6259] mt-2">
+              <h2 className="font-serif text-3xl text-[#002d43] font-medium">Expediente de Documentos</h2>
+              <p className="font-sans text-sm text-[#4b5563] mt-2">
                 Completa tu perfil cargando la documentación que tienes disponible para el análisis comercial.
               </p>
             </div>
 
             <div className="space-y-6 max-w-2xl mx-auto">
-              <div className="bg-[#FAF7F2]/60 border border-[#6E6259]/10 rounded-2xl p-5 md:p-6 shadow-card space-y-4">
-                <h3 className="font-sans text-base font-semibold text-[#2E251E] flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#B76E4D]" />
+              <div className="bg-[#f5f7f8]/60 border border-[#4b5563]/10 rounded-2xl p-5 md:p-6 shadow-card space-y-4">
+                <h3 className="font-sans text-base font-semibold text-[#002d43] flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-[#867027]" />
                   Documentos a Disposición
                 </h3>
 
@@ -1154,23 +1154,23 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                     return (
                       <div
                         key={doc.id}
-                        className="bg-white rounded-2xl p-4 border border-[#6E6259]/15 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-card hover:border-[#B76E4D]/30 transition-all duration-300"
+                        className="bg-white rounded-2xl p-4 border border-[#4b5563]/15 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-card hover:border-[#867027]/30 transition-all duration-300"
                       >
                         <div className="flex items-center gap-3">
                           {uploadingDocs[doc.id] ? (
-                            <Loader2 className="w-5 h-5 text-[#B76E4D] animate-spin shrink-0" />
+                            <Loader2 className="w-5 h-5 text-[#867027] animate-spin shrink-0" />
                           ) : isUploaded ? (
                             <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
                           ) : (
-                            <div className={`w-5 h-5 rounded-full border-2 shrink-0 ${doc.requerido ? "border-red-400" : "border-[#6E6259]/30"}`} />
+                            <div className={`w-5 h-5 rounded-full border-2 shrink-0 ${doc.requerido ? "border-red-400" : "border-[#4b5563]/30"}`} />
                           )}
                           <div>
-                            <p className="font-sans font-medium text-sm text-[#2E251E]">
+                            <p className="font-sans font-medium text-sm text-[#002d43]">
                               {doc.label}
                               {doc.requerido && <span className="text-red-500 ml-1">*</span>}
                             </p>
                             {uploadingDocs[doc.id] ? (
-                              <span className="text-[10px] text-[#B76E4D] font-sans font-medium animate-pulse">Subiendo a base de datos...</span>
+                              <span className="text-[10px] text-[#867027] font-sans font-medium animate-pulse">Subiendo a base de datos...</span>
                             ) : isUploaded ? (
                               <span className="text-[10px] text-green-600 font-sans font-medium">Documento listo en expediente</span>
                             ) : null}
@@ -1184,7 +1184,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
                             size="sm"
                             onClick={() => isUploaded ? handleRemoveDoc(doc.id) : handleAttachClick(doc.id)}
                             disabled={isSubmitting || uploadingDocs[doc.id]}
-                            className={`rounded-full font-sans text-xs border-[#6E6259]/20 hover:bg-[#FAF7F2] hover:text-[#B76E4D] ${
+                            className={`rounded-full font-sans text-xs border-[#4b5563]/20 hover:bg-[#f5f7f8] hover:text-[#867027] ${
                               isUploaded ? "border-green-600 text-green-700 bg-green-50/50 hover:bg-green-50" : ""
                             }`}
                           >
@@ -1213,10 +1213,10 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
               </div>
 
               {/* Nota de Alerta */}
-              <div className="bg-[#FAF7F2] border border-[#B76E4D]/20 rounded-2xl p-5 flex gap-3 shadow-card">
-                <AlertCircle className="w-5 h-5 text-[#B76E4D] shrink-0 mt-0.5" />
-                <div className="text-xs text-[#6E6259] leading-relaxed">
-                  <p className="font-sans font-semibold text-[#2E251E] mb-1">Políticas de Privacidad e Integridad:</p>
+              <div className="bg-[#f5f7f8] border border-[#867027]/20 rounded-2xl p-5 flex gap-3 shadow-card">
+                <AlertCircle className="w-5 h-5 text-[#867027] shrink-0 mt-0.5" />
+                <div className="text-xs text-[#4b5563] leading-relaxed">
+                  <p className="font-sans font-semibold text-[#002d43] mb-1">Políticas de Privacidad e Integridad:</p>
                   <p>
                     Toda la información adjuntada será transferida de manera cifrada directamente a la base de datos de tu asesor inmobiliario. No se divulga con ninguna plataforma externa de terceros.
                   </p>
@@ -1235,7 +1235,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
           variant="outline"
           onClick={handleBack}
           disabled={currentStep === 1 || isSubmitting}
-          className="rounded-full px-6 border-[#6E6259]/20 font-sans text-sm text-[#6E6259]"
+          className="rounded-full px-6 border-[#4b5563]/20 font-sans text-sm text-[#4b5563]"
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
           Anterior
@@ -1246,7 +1246,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
             type="button"
             onClick={handleNext}
             disabled={isSubmitting}
-            className="rounded-full px-8 bg-[#B76E4D] hover:bg-[#9a5435] font-sans text-sm text-white shadow-md hover:scale-105 transition-all duration-300"
+            className="rounded-full px-8 bg-[#867027] hover:bg-[#6e5a1e] font-sans text-sm text-white shadow-md hover:scale-105 transition-all duration-300"
           >
             Siguiente
             <ChevronRight className="w-4 h-4 ml-2" />
@@ -1256,7 +1256,7 @@ export default function FormularioMultiStep({ onSubmitComplete }: FormularioMult
             type="button"
             onClick={handleFormSubmit}
             disabled={isSubmitting}
-            className="rounded-full px-8 bg-[#B76E4D] hover:bg-[#9a5435] font-sans text-sm text-white shadow-md hover:scale-[1.03] transition-all duration-300"
+            className="rounded-full px-8 bg-[#867027] hover:bg-[#6e5a1e] font-sans text-sm text-white shadow-md hover:scale-[1.03] transition-all duration-300"
           >
             {isSubmitting ? (
               <>

@@ -21,6 +21,7 @@ import { useSiteUser } from '@/hooks/useSiteUser';
 import { formatPrice, actionLabel } from '@/lib/cbf';
 import PropertyMap from '@/components/map/PropertyMap';
 import type { MapProperty } from '@/components/map/PropertyMap';
+import { Header } from '@/components/layout/Header';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
@@ -74,33 +75,7 @@ const Properties = () => {
 
   return (
     <div className="flex flex-col h-screen bg-white text-[#231f20] overflow-hidden">
-      {/* Header */}
-      <header className="flex shrink-0 items-center justify-between bg-[#002d43] px-6 py-3 z-50 shadow-md">
-        <Link to="/" className="flex items-center gap-4 text-white hover:opacity-90 transition-opacity">
-          <div className="size-8 flex items-center justify-center bg-white/10 rounded-lg text-[#867027]">
-            <Building2 className="size-5" />
-          </div>
-          <h2 className="text-xl font-bold tracking-tight uppercase">
-            {site?.site_name ? <>{site.site_name}</> : <>Frank Co <span className="text-[#867027]">Asesores</span></>}
-          </h2>
-        </Link>
-
-        <div className="flex flex-1 justify-end gap-8">
-          <nav className="hidden md:flex items-center gap-9">
-            <Link to="/propiedades" className="text-white/90 hover:text-[#867027] text-sm font-medium transition-colors">Propiedades</Link>
-            <Link to="/listings" className="text-white/70 hover:text-[#867027] text-sm font-medium transition-colors">Portafolio</Link>
-          </nav>
-
-          <div className="flex gap-3">
-            <button className="flex size-9 items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
-              <Bell className="size-5" />
-            </button>
-            <button className="flex size-9 items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
-              <User className="size-5" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main */}
       <div className="flex flex-1 overflow-hidden relative">
