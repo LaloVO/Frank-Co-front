@@ -130,6 +130,7 @@ const Index = () => {
           <Link to="/propiedades" className="text-sm font-medium text-[#002d43] hover:text-[#867027] transition-colors">Propiedades</Link>
           <Link to="/listings" className="text-sm font-medium text-[#002d43] hover:text-[#867027] transition-colors">Portafolio</Link>
           <a href="#" className="text-sm font-medium text-[#002d43] hover:text-[#867027] transition-colors">Testimonios</a>
+          <Link to="/solicita-inmueble" className="text-sm font-bold text-white bg-[#867027] hover:bg-[#002d43] px-4 py-2 rounded transition-all">Solicitar Inmueble</Link>
           {user?.telefono_usuario ? (
             <a
               href={`https://wa.me/${user.telefono_usuario.replace(/\D/g, '')}`}
