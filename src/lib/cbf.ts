@@ -1,5 +1,12 @@
-const BASE_URL = import.meta.env.VITE_CBF_API_URL as string;
-const API_KEY = import.meta.env.VITE_CBF_API_KEY as string;
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_CBF_API_URL as string;
+  if (envUrl && envUrl.trim() !== "" && envUrl.trim() !== "undefined") return envUrl.trim();
+  if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"))
+    return "http://localhost:3000/api/cbf";
+  return "https://homepty-cbf-tite-testing-chi.vercel.app/api/cbf";
+};
+const BASE_URL = getBaseUrl();
+const API_KEY = (import.meta.env.VITE_CBF_API_KEY as string) || "cbf_live_09224f293383418640bda6b079e137b597";
 
 export interface CBFImage {
   image_url: string;
@@ -99,4 +106,43 @@ export function actionLabel(id?: number): string {
     6: "Remate",
   };
   return id ? (map[id] ?? "En Venta") : "En Venta";
+}
+
+export interface LeadSubmission {
+  nombre_completo: string;
+  email: string;
+  telefono: string;
+  tipo_operacion: "compra" | "renta";
+  tipo_propiedad: string;
+  num_habitaciones?: string;
+  num_banos?: string;
+  num_estacionamientos?: string;
+  metros_cuadrados_min?: string;
+  metros_cuadrados_max?: string;
+  estados_deseados: string[];
+  ciudades_deseadas?: string[];
+  zonas_especificas?: string;
+  estilo_vida_descripcion: string;
+  presupuesto_min: string;
+  presupuesto_max: string;
+  metodo_pago: string[];
+  tiene_precalificacion_crediticia?: boolean;
+  institucion_crediticia?: string;
+  uso_destino: "vivienda_propia" | "inversion" | "negocio" | "vacacional" | "otro";
+  detalles_uso?: string;
+  documentos_disponibles?: string[];
+  documentos_urls?: Record<string, string>;
+}
+
+export async function submitLead(lead: LeadSubmission): Promise<{ success: boolean; data: any }> {
+  const res = await fetch(`${BASE_URL}/leads`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify(lead),
+  });
+  if (!res.ok) {
+    const errorJson = await res.json().catch(() => ({}));
+    throw new Error(errorJson.error || "Error al enviar la solicitud");
+  }
+  return res.json();
 }

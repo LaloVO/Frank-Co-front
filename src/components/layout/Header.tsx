@@ -51,7 +51,7 @@ export function Header() {
               <Link to="/auth">Iniciar Sesión</Link>
             </Button>
             <Button className="gold-gradient text-primary-foreground hover:opacity-90" asChild>
-              <Link to="/auth?mode=signup">Registrarse</Link>
+              <Link to="/solicita-inmueble">Solicitar Inmueble</Link>
             </Button>
           </div>
 
@@ -90,8 +90,8 @@ export function Header() {
                   </Link>
                 </Button>
                 <Button className="gold-gradient text-primary-foreground" asChild>
-                  <Link to="/auth?mode=signup" onClick={() => setIsOpen(false)}>
-                    Registrarse
+                  <Link to="/solicita-inmueble" onClick={() => setIsOpen(false)}>
+                    Solicitar Inmueble
                   </Link>
                 </Button>
               </div>
