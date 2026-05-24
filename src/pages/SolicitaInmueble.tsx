@@ -10,14 +10,14 @@ const SolicitaInmueble = () => {
       <main className="min-h-screen bg-background pt-24 pb-16">
         {/* Header */}
         <section className="text-center px-6 mb-12">
-          <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3 font-medium">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#867027] mb-3 font-medium">
             Asesoría Personalizada
           </p>
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-[#002d43] mb-4">
             Solicita tu{" "}
-            <span className="gold-gradient-text">Inmueble Ideal</span>
+            <span className="text-[#867027]">Inmueble Ideal</span>
           </h1>
-          <p className="text-muted-foreground text-sm max-w-xl mx-auto leading-relaxed">
+          <p className="text-[#4b5563] text-sm max-w-xl mx-auto leading-relaxed">
             Completa tu perfil en 6 pasos. Nuestro equipo analizará tu
             expediente y te contactará con las mejores opciones.
           </p>
