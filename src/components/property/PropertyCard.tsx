@@ -3,6 +3,7 @@ import { MapPin, Bed, Bath, Maximize, MessageCircle } from 'lucide-react';
 import { Property } from '@/types/property';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { useSiteUser } from '@/hooks/useSiteUser';
 
 interface PropertyCardProps {
   property: Property;
@@ -25,13 +26,16 @@ const formatPrice = (price: number, currency: string) => {
 };
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
+  const { user } = useSiteUser();
+
   const handleWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const phone = user?.telefono_usuario?.replace(/\D/g, '') ?? '';
     const message = encodeURIComponent(
       `Hola, me interesa la propiedad: ${property.title} - ${formatPrice(property.price, property.currency)}`
     );
-    window.open(`https://wa.me/525555555555?text=${message}`, '_blank');
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
 
   return (
