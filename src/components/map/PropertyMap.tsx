@@ -23,6 +23,40 @@ interface PropertyMapProps {
   initialCenter?: { lat: number; lng: number };
 }
 
+/**
+ * Finds the geographical center of the densest cluster of properties,
+ * so the map defaults to the area where the advisor actually has listings.
+ */
+function findDensestClusterCenter(properties: MapProperty[]): { lat: number; lng: number } | null {
+  if (properties.length === 0) return null;
+
+  const CELL_SIZE = 0.05; // ~5 km grid
+  const grid: Record<string, MapProperty[]> = {};
+
+  for (const p of properties) {
+    const key = `${Math.round(p.coordinates.lat / CELL_SIZE)}_${Math.round(p.coordinates.lng / CELL_SIZE)}`;
+    if (!grid[key]) grid[key] = [];
+    grid[key].push(p);
+  }
+
+  let maxCount = 0;
+  let densestCell: MapProperty[] = [];
+
+  for (const cell of Object.values(grid)) {
+    if (cell.length > maxCount) {
+      maxCount = cell.length;
+      densestCell = cell;
+    }
+  }
+
+  if (densestCell.length === 0) return null;
+
+  const avgLat = densestCell.reduce((sum, p) => sum + p.coordinates.lat, 0) / densestCell.length;
+  const avgLng = densestCell.reduce((sum, p) => sum + p.coordinates.lng, 0) / densestCell.length;
+
+  return { lat: avgLat, lng: avgLng };
+}
+
 const PropertyMap = ({ properties, mapboxToken, initialCenter }: PropertyMapProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -43,26 +77,11 @@ const PropertyMap = ({ properties, mapboxToken, initialCenter }: PropertyMapProp
     const map = new mapboxgl.Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/light-v11',
-      center: [-99.1332, 19.4326],
-      zoom: 11,
+      center: initialCenter ? [initialCenter.lng, initialCenter.lat] : [-99.1332, 19.4326],
+      zoom: initialCenter ? 13 : 11,
     });
     mapRef.current = map;
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          if (!boundsFitRef.current) {
-            map.flyTo({
-              center: [pos.coords.longitude, pos.coords.latitude],
-              zoom: 12,
-              duration: 1200,
-            });
-          }
-        },
-        () => {}
-      );
-    }
 
     return () => {
       map.remove();
@@ -148,6 +167,33 @@ const PropertyMap = ({ properties, mapboxToken, initialCenter }: PropertyMapProp
       renderMarkers();
     } else {
       map.once('load', renderMarkers);
+    }
+  }, [properties, initialCenter]);
+
+  // On initial load, if no URL center was provided AND properties haven't
+  // already set the bounds, fly to the zone with the highest concentration
+  // of the owner's properties instead of the user's IP geolocation.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || initialCenter || properties.length === 0) return;
+
+    const flyToDensest = () => {
+      if (boundsFitRef.current) return;
+      const center = findDensestClusterCenter(properties);
+      if (center) {
+        boundsFitRef.current = true;
+        map.flyTo({
+          center: [center.lng, center.lat],
+          zoom: 12,
+          duration: 1200,
+        });
+      }
+    };
+
+    if (map.loaded()) {
+      setTimeout(flyToDensest, 100);
+    } else {
+      map.once('load', () => setTimeout(flyToDensest, 100));
     }
   }, [properties, initialCenter]);
 

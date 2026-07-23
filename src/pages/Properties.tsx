@@ -20,6 +20,7 @@ import { useProperties } from '@/hooks/useProperties';
 import { useSiteUser } from '@/hooks/useSiteUser';
 import { formatPrice, actionLabel } from '@/lib/cbf';
 import PropertyMap from '@/components/map/PropertyMap';
+import { useGeocodedProperties } from '@/hooks/useGeocodedProperties';
 import type { MapProperty } from '@/components/map/PropertyMap';
 import { Header } from '@/components/layout/Header';
 
@@ -33,7 +34,7 @@ const Properties = () => {
   const { properties, isLoading } = useProperties({ limit: 100 });
   const { site } = useSiteUser();
 
-  const mapboxToken = site?.platform_config?.mapbox_token ?? '';
+  const mapboxToken = site?.platform_config?.mapbox_token ?? import.meta.env.VITE_MAPBOX_TOKEN ?? '';
 
   const urlTipo = searchParams.get('tipo') ?? '';
   const urlOperacion = searchParams.get('operacion') ?? '';
@@ -54,9 +55,11 @@ const Properties = () => {
     });
   }, [properties, search, urlTipo, urlOperacion]);
 
+  const geocodedFiltered = useGeocodedProperties(filtered, mapboxToken);
+
   const mapProperties = useMemo<MapProperty[]>(
     () =>
-      filtered
+      geocodedFiltered
         .filter((p) => p.latitud != null && p.longitud != null)
         .map((p) => ({
           id: p.id,
@@ -68,9 +71,9 @@ const Properties = () => {
           bedrooms: p.habitaciones ?? 0,
           bathrooms: p.banios ?? 0,
           sqm: p.area ?? 0,
-          coordinates: { lat: p.latitud!, lng: p.longitud! },
+          coordinates: { lat: Number(p.latitud!), lng: Number(p.longitud!) },
         })),
-    [filtered]
+    [geocodedFiltered]
   );
 
   return (
