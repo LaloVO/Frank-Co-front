@@ -1,12 +1,19 @@
 const getBaseUrl = () => {
   const envUrl = import.meta.env.VITE_CBF_API_URL as string;
-  if (envUrl && envUrl.trim() !== "" && envUrl.trim() !== "undefined") return envUrl.trim();
-  if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"))
-    return "http://localhost:3000/api/cbf";
-  return "https://homepty-cbf-tite-testing-chi.vercel.app/api/cbf";
+  if (envUrl && envUrl.trim() !== "" && envUrl.trim() !== "undefined") {
+    return envUrl.trim();
+  }
+  
+  if (typeof window !== "undefined") {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      return "http://localhost:3000/api/cbf";
+    }
+  }
+  return "https://homepty-cbf-tite-testing-chi.vercel.app/api/cbf"; // fallback producción
 };
+
 const BASE_URL = getBaseUrl();
-const API_KEY = (import.meta.env.VITE_CBF_API_KEY as string) || "cbf_live_09224f293383418640bda6b079e137b597";
+const API_KEY = (import.meta.env.VITE_CBF_API_KEY as string) || "cbf_live_WjaEj-7Jpc9DEgmNChSBOUH35inuqzfV";
 
 export interface CBFImage {
   image_url: string;
@@ -22,7 +29,6 @@ export interface CBFProperty {
   area?: number;
   habitaciones?: number;
   banios?: number;
-  medios_banios?: number;
   estacionamientos?: number;
   direccion?: string;
   colonia?: string;
@@ -33,6 +39,15 @@ export interface CBFProperty {
   longitud?: number;
   caracteristicas?: string;
   imagenes_propiedades?: CBFImage[];
+  // Campos de desarrollo
+  is_unit?: boolean | null;
+  parent_id?: number | null;
+  development_verticals?: string[] | null;
+  fecha_entrega?: string | null;
+  fecha_inicio?: string | null;
+  comision?: number | null;
+  descripcion_estado?: string | null;
+  descripcion_inversion?: string | null;
 }
 
 export interface CBFUser {
@@ -68,6 +83,7 @@ export async function fetchProperties(params?: {
   offset?: number;
   tipo?: string;
   id_tipo_accion?: number;
+  is_unit?: boolean;
 }): Promise<{ data: CBFProperty[]; pagination: { limit: number; offset: number; total: number } }> {
   const query = new URLSearchParams();
   if (params?.limit) query.set("limit", String(params.limit));
@@ -75,6 +91,8 @@ export async function fetchProperties(params?: {
   if (params?.tipo) query.set("tipo", params.tipo);
   if (params?.id_tipo_accion !== undefined)
     query.set("id_tipo_accion", String(params.id_tipo_accion));
+  if (params?.is_unit !== undefined)
+    query.set("is_unit", String(params.is_unit));
 
   const res = await fetch(`${BASE_URL}/properties?${query}`, { headers: headers() });
   if (!res.ok) throw new Error("Error al cargar propiedades");
@@ -88,24 +106,12 @@ export async function fetchProperty(id: string): Promise<CBFProperty> {
   return json.data ?? json;
 }
 
-export function formatPrice(precio: number, moneda = "MXN"): string {
+export function formatPrice(precio: number, moneda: string = "MXN"): string {
   return new Intl.NumberFormat("es-MX", {
     style: "currency",
-    currency: moneda === "USD" ? "USD" : "MXN",
+    currency: moneda || "MXN",
     maximumFractionDigits: 0,
   }).format(precio);
-}
-
-export function actionLabel(id?: number): string {
-  const map: Record<number, string> = {
-    1: "En Venta",
-    2: "En Renta",
-    3: "Traspaso",
-    4: "Pre-Venta",
-    5: "Aportación",
-    6: "Remate",
-  };
-  return id ? (map[id] ?? "En Venta") : "En Venta";
 }
 
 export interface LeadSubmission {
@@ -144,8 +150,30 @@ export async function submitLead(lead: LeadSubmission): Promise<{ success: boole
   });
   if (!res.ok) {
     const errorJson = await res.json().catch(() => ({}));
-    throw new Error(errorJson.error || "Error al enviar la solicitud");
+    throw new Error(errorJson.error || "Error al enviar la solicitud de búsqueda inteligente");
   }
+  return res.json();
+}
+
+export interface CBFPost {
+  id: string;
+  title: string;
+  content: string;
+  tags?: string[];
+  post_type: "post" | "blog";
+  created_at: string;
+  property?: CBFProperty | null;
+}
+
+export async function fetchPosts(params?: {
+  post_type?: "post" | "blog";
+  limit?: number;
+}): Promise<{ data: CBFPost[] }> {
+  const query = new URLSearchParams();
+  if (params?.post_type) query.set("post_type", params.post_type);
+  if (params?.limit) query.set("limit", String(params.limit));
+  const res = await fetch(`${BASE_URL}/posts?${query}`, { headers: headers() });
+  if (!res.ok) throw new Error("Error al cargar posts");
   return res.json();
 }
 
@@ -154,4 +182,16 @@ export async function fetchBusySlots(): Promise<Array<{ start: string; end: stri
   if (!res.ok) throw new Error("Error al cargar horarios ocupados");
   const json = await res.json();
   return json.busySlots || [];
+}
+
+export function actionLabel(id?: number): string {
+  const map: Record<number, string> = {
+    1: "Venta",
+    2: "Renta",
+    3: "Traspaso",
+    4: "Pre-Venta",
+    5: "Aportación",
+    6: "Remate"
+  };
+  return id ? (map[id] ?? "Venta") : "Venta";
 }

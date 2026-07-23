@@ -191,6 +191,17 @@ const Properties = () => {
         {/* Mapa */}
         <section className="flex-1 relative h-full">
           <PropertyMap properties={mapProperties} mapboxToken={mapboxToken} initialCenter={initialCenter} />
+
+          {/* Botón flotante centrado en la parte inferior que navega a /listings */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+            <Link
+              to="/listings"
+              className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#002d43] hover:bg-[#867027] text-white text-xs font-bold uppercase tracking-wider shadow-2xl backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-105 active:scale-95"
+            >
+              <Menu className="size-4" />
+              <span>Lista</span>
+            </Link>
+          </div>
         </section>
       </div>
     </div>

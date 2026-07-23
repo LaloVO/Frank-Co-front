@@ -23,6 +23,7 @@ import { useProperties } from '@/hooks/useProperties';
 import { useSiteUser } from '@/hooks/useSiteUser';
 import { formatPrice, actionLabel } from '@/lib/cbf';
 import { Header } from '@/components/layout/Header';
+import { AnimatedPropertySelector } from '@/components/home/AnimatedPropertySelector';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
@@ -335,49 +336,34 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Testimonios */}
-        <section className="bg-[#f5f7f8] py-20 px-4 md:px-10 overflow-hidden border-t border-gray-200">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center">
-            <div className="md:w-1/3">
-              <h2 className="text-4xl font-extrabold text-[#002d43] mb-4 leading-tight">
-                Confiados por <br /> <span className="text-[#867027]">Visionarios</span>
+        {/* Sección Solicitar Inmueble (Smart Search CTA) */}
+        <section className="bg-white py-20 px-4 md:px-10 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <span className="text-[#867027] text-xs font-bold uppercase tracking-widest block">
+                Asesoría Personalizada
+              </span>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-[#002d43] leading-tight">
+                Encuentra la residencia ideal según tu <span className="text-[#867027]">estilo de vida</span>
               </h2>
-              <p className="text-gray-600 mb-8">
-                Hemos ayudado a más de 500 personas a encontrar su propiedad ideal y asegurar su legado financiero.
+              <p className="text-gray-600 text-base leading-relaxed">
+                ¿No encontraste lo que buscabas? Completa nuestra solicitud de inmueble en pocos pasos indicando tu presupuesto, zona de preferencia, financiamiento y requerimientos clave.
               </p>
-              <div className="flex gap-4">
-                <button className="size-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-[#002d43] hover:text-white hover:border-[#002d43] transition-colors text-gray-600">
-                  <ChevronLeft className="size-5" />
-                </button>
-                <button className="size-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-[#002d43] hover:text-white hover:border-[#002d43] transition-colors text-gray-600">
-                  <ChevronRight className="size-5" />
-                </button>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Nuestros asesores expertos analizarán tu perfil para encontrar o gestionar la propiedad perfecta para ti.
+              </p>
+
+              <div className="pt-2">
+                <Link to="/solicita-inmueble">
+                  <Button className="bg-[#002d43] hover:bg-[#867027] text-white rounded-full px-8 py-6 text-sm font-bold uppercase tracking-wider transition-all duration-300 shadow-lg">
+                    Solicitar Inmueble <ArrowRight className="ml-2 size-4" />
+                  </Button>
+                </Link>
               </div>
             </div>
 
-            <div className="md:w-2/3 h-[400px] relative overflow-hidden">
-              <div className="flex flex-col gap-6 animate-scroll-vertical">
-                {[
-                  { name: "Carlos Rodríguez", role: "Inversionista", text: "La asesoría financiera fue excepcional, igual que la propiedad. Entendieron exactamente lo que necesitaba para mi portafolio." },
-                  { name: "Sofía Méndez", role: "Empresaria", text: "Encontrar un penthouse en Polanco que cumpliera mis estándares de seguridad y lujo era imposible hasta que conocí a este equipo." },
-                  { name: "David Cohen", role: "Arquitecto", text: "Proceso impecable desde la primera visita hasta la firma final. Muy recomendable para transacciones de alto nivel." },
-                  { name: "Carlos Rodríguez", role: "Inversionista", text: "La asesoría financiera fue excepcional, igual que la propiedad. Entendieron exactamente lo que necesitaba para mi portafolio." },
-                ].map((t, i) => (
-                  <div key={i} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                    <div className="flex text-[#867027] mb-4">
-                      {[1, 2, 3, 4, 5].map((s) => <Star key={s} className="size-4 fill-current" />)}
-                    </div>
-                    <p className="text-lg text-[#231f20] italic mb-6">"{t.text}"</p>
-                    <div className="flex items-center gap-3">
-                      <div className="size-10 rounded-full bg-gray-200" />
-                      <div>
-                        <p className="text-sm font-bold text-[#002d43]">{t.name}</p>
-                        <p className="text-xs text-gray-500">{t.role}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="lg:col-span-6 relative flex items-center justify-center">
+              <AnimatedPropertySelector />
             </div>
           </div>
         </section>
@@ -408,44 +394,28 @@ const Index = () => {
               <h4 className="text-lg font-bold mb-6">Explorar</h4>
               <ul className="space-y-4 text-sm text-gray-300">
                 <li><Link to="/listings" className="hover:text-[#867027] transition-colors">Residencial</Link></li>
-                <li><Link to="/listings" className="hover:text-[#867027] transition-colors">Comercial</Link></li>
-                <li><Link to="/listings" className="hover:text-[#867027] transition-colors">Nuevos Desarrollos</Link></li>
-                <li><Link to="/listings" className="hover:text-[#867027] transition-colors">Destacados</Link></li>
+                <li><Link to="/desarrollos" className="hover:text-[#867027] transition-colors">Desarrollos</Link></li>
+                <li><Link to="/propiedades" className="hover:text-[#867027] transition-colors">Propiedades</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-lg font-bold mb-6">Servicios</h4>
               <ul className="space-y-4 text-sm text-gray-300">
-                <li><a href="#" className="hover:text-[#867027] transition-colors">Consultoría Financiera</a></li>
-                <li><a href="#" className="hover:text-[#867027] transition-colors">Administración de Propiedades</a></li>
-                <li><a href="#" className="hover:text-[#867027] transition-colors">Asesoría Legal</a></li>
-                <li><a href="#" className="hover:text-[#867027] transition-colors">Apoyo Infonavit</a></li>
+                <li><Link to="/vender-propiedad" className="hover:text-[#867027] transition-colors">Vender Propiedad</Link></li>
+                <li><Link to="/solicita-inmueble" className="hover:text-[#867027] transition-colors">Solicitar Inmueble</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-lg font-bold mb-6">Boletín</h4>
-              <p className="text-gray-400 text-sm mb-4">Suscríbete para recibir actualizaciones de propiedades exclusivas.</p>
-              <form className="flex flex-col gap-3">
-                <input
-                  type="email"
-                  placeholder="Tu correo electrónico"
-                  className="w-full bg-[#003855] border-none rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:ring-1 focus:ring-[#867027]"
-                />
-                <Button className="bg-[#867027] text-white font-bold py-3 px-4 rounded-lg text-sm hover:bg-[#9a8130] transition-colors uppercase tracking-wide w-full">
-                  Suscribirse
-                </Button>
-              </form>
+              <h4 className="text-lg font-bold mb-6">Contacto</h4>
+              <p className="text-gray-400 text-sm mb-2">{user?.nombre_usuario || 'Frank Co Asesores'}</p>
+              <p className="text-gray-400 text-sm">{user?.email_usuario}</p>
             </div>
           </div>
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-xs">© 2025 {site?.site_name ?? 'Frank Co Asesores'}. Todos los derechos reservados.</p>
-            <div className="flex gap-6 text-xs text-gray-500">
-              <a href="#" className="hover:text-white transition-colors">Política de Privacidad</a>
-              <a href="#" className="hover:text-white transition-colors">Términos de Servicio</a>
-            </div>
           </div>
         </div>
       </footer>

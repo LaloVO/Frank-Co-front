@@ -8,6 +8,8 @@ import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import PropertyListings from "./pages/PropertyListings";
 import SolicitaInmueble from "./pages/SolicitaInmueble";
+import Desarrollos from "./pages/Desarrollos";
+import VenderPropiedad from "./pages/VenderPropiedad";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/desarrollos" element={<Desarrollos />} />
+          <Route path="/vender-propiedad" element={<VenderPropiedad />} />
           <Route path="/propiedades" element={<Properties />} />
           <Route path="/propiedad/:id" element={<PropertyDetail />} />
           <Route path="/listings" element={<PropertyListings />} />

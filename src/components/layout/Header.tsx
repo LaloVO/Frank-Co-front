@@ -7,6 +7,7 @@ import { useSiteUser } from '@/hooks/useSiteUser';
 
 const navigation = [
   { name: 'Inicio', href: '/' },
+  { name: 'Desarrollos', href: '/desarrollos' },
   { name: 'Propiedades', href: '/propiedades' },
   { name: 'Portafolio', href: '/listings' },
 ];
@@ -60,13 +61,13 @@ export function Header() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
             <Button
               variant="outline"
               asChild
               className="rounded-full px-5 border-[#002d43]/20 text-[#002d43] hover:bg-[#f5f7f8] font-sans text-sm font-semibold"
             >
-              <Link to="/solicita-inmueble">Solicitar Inmueble</Link>
+              <Link to="/vender-propiedad">Vender propiedad</Link>
             </Button>
             <Button
               onClick={handleContactClick}
@@ -111,8 +112,8 @@ export function Header() {
                   asChild
                   className="rounded-full w-full justify-center border-[#002d43]/20 text-[#002d43] hover:bg-[#f5f7f8] font-semibold"
                 >
-                  <Link to="/solicita-inmueble" onClick={() => setIsOpen(false)}>
-                    Solicitar Inmueble
+                  <Link to="/vender-propiedad" onClick={() => setIsOpen(false)}>
+                    Vender propiedad
                   </Link>
                 </Button>
                 <Button
