@@ -10,9 +10,6 @@ const SolicitaInmueble = () => {
       <main className="min-h-screen bg-background pt-24 pb-16">
         {/* Header */}
         <section className="text-center px-6 mb-12">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#867027] mb-3 font-medium">
-            Asesoría Personalizada
-          </p>
           <h1 className="text-4xl md:text-5xl font-display font-bold text-[#002d43] mb-4">
             Solicita tu{" "}
             <span className="text-[#867027]">Inmueble Ideal</span>

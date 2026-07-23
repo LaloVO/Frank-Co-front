@@ -253,7 +253,6 @@ const PropertyDetail = () => {
             <div className="sticky top-28 space-y-6">
               <div className="bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-100 ring-1 ring-[#002d43]/5">
                 <div className="bg-[#002d43] p-6 text-white">
-                  <p className="text-[10px] font-black text-[#867027] uppercase tracking-[0.2em] mb-1">Precio</p>
                   <p className="text-3xl font-black">{formatPrice(property.precio, property.moneda)}</p>
                   <p className="text-white/50 text-sm mt-1">{label}</p>
                 </div>
@@ -328,14 +327,14 @@ const PropertyDetail = () => {
           <div className="flex items-center gap-3">
             <Building2 className="size-6 text-[#867027]" />
             <span className="text-xl font-bold uppercase tracking-widest">
-              {site?.site_name ?? 'Frank Co Asesores'}
+              Frank & Co. Consultores
             </span>
           </div>
           <div className="flex gap-12 text-xs font-black uppercase tracking-widest text-white/30">
             <a href="#" className="hover:text-white transition-colors">Privacidad</a>
             <a href="#" className="hover:text-white transition-colors">Términos</a>
           </div>
-          <p className="text-[10px] font-medium text-white/20">© 2025 {site?.site_name ?? 'Frank Co Asesores'}. Todos los derechos reservados.</p>
+          <p className="text-[10px] font-medium text-white/20">© 2025 {site?.site_name ?? 'Frank & Co. Consultores'}. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>

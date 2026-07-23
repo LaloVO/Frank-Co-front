@@ -32,13 +32,7 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
             <Building2 className="size-8 text-[#002d43]" />
             <h2 className="text-[#002d43] text-xl font-bold uppercase tracking-tight font-sans">
-              {site?.site_name ? (
-                <>{site.site_name}</>
-              ) : (
-                <>
-                  Frank Co <span className="text-[#867027]">Asesores</span>
-                </>
-              )}
+              Frank & Co. <span className="text-[#867027]">Consultores</span>
             </h2>
           </Link>
 

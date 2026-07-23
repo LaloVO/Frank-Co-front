@@ -340,9 +340,6 @@ const Index = () => {
         <section className="bg-white py-20 px-4 md:px-10 border-t border-gray-200">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
-              <span className="text-[#867027] text-xs font-bold uppercase tracking-widest block">
-                Asesoría Personalizada
-              </span>
               <h2 className="text-3xl md:text-5xl font-extrabold text-[#002d43] leading-tight">
                 Encuentra la residencia ideal según tu <span className="text-[#867027]">estilo de vida</span>
               </h2>
@@ -377,7 +374,7 @@ const Index = () => {
               <Link to="/" className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
                 <Building2 className="size-6 text-[#867027]" />
                 <span className="text-xl font-bold tracking-tight uppercase text-white">
-                  {site?.site_name ? <>{site.site_name}</> : <>Frank Co <span className="text-[#867027]">Asesores</span></>}
+                  Frank & Co. <span className="text-[#867027]">Consultores</span>
                 </span>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -409,13 +406,13 @@ const Index = () => {
 
             <div>
               <h4 className="text-lg font-bold mb-6">Contacto</h4>
-              <p className="text-gray-400 text-sm mb-2">{user?.nombre_usuario || 'Frank Co Asesores'}</p>
+              <p className="text-gray-400 text-sm mb-2">{user?.nombre_usuario || 'Frank & Co. Consultores'}</p>
               <p className="text-gray-400 text-sm">{user?.email_usuario}</p>
             </div>
           </div>
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-xs">© 2025 {site?.site_name ?? 'Frank Co Asesores'}. Todos los derechos reservados.</p>
+            <p className="text-gray-500 text-xs">© 2025 {site?.site_name ?? 'Frank & Co. Consultores'}. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

@@ -36,7 +36,7 @@ export default function VenderPropiedad() {
               <Link to="/" className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
                 <Building2 className="size-6 text-[#867027]" />
                 <span className="text-xl font-bold tracking-tight uppercase text-white">
-                  {site?.site_name ? <>{site.site_name}</> : <>Frank Co <span className="text-[#867027]">Asesores</span></>}
+                  Frank & Co. <span className="text-[#867027]">Consultores</span>
                 </span>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -68,13 +68,13 @@ export default function VenderPropiedad() {
 
             <div>
               <h4 className="text-lg font-bold mb-6">Contacto</h4>
-              <p className="text-gray-400 text-sm mb-2">{user?.nombre_usuario || 'Frank Co Asesores'}</p>
+              <p className="text-gray-400 text-sm mb-2">{user?.nombre_usuario || 'Frank & Co. Consultores'}</p>
               <p className="text-gray-400 text-sm">{user?.email_usuario}</p>
             </div>
           </div>
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-xs">© 2025 {site?.site_name ?? 'Frank Co Asesores'}. Todos los derechos reservados.</p>
+            <p className="text-gray-500 text-xs">© 2025 {site?.site_name ?? 'Frank & Co. Consultores'}. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

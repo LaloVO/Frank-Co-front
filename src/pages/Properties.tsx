@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   Building2,
@@ -23,6 +23,42 @@ import PropertyMap from '@/components/map/PropertyMap';
 import { useGeocodedProperties } from '@/hooks/useGeocodedProperties';
 import type { MapProperty } from '@/components/map/PropertyMap';
 import { Header } from '@/components/layout/Header';
+import { cn } from '@/lib/utils';
+
+import PropertyFilters, { Filters, DEFAULT_FILTERS, SEGMENTS, SUBSEGMENTS, AMENIDADES_OPTS } from '@/components/map/PropertyFilters';
+
+export const VERTICAL_ID_BY_TIPO: Record<string, number> = {
+  'casa': 1,
+  'departamento': 1,
+  'loft': 1,
+  'penthouse': 1,
+  'studio': 1,
+  'villa': 1,
+  'local': 2,
+  'local comercial': 2,
+  'plaza comercial': 2,
+  'restaurante': 2,
+  'oficina': 3,
+  'consultorio': 3,
+  'bodega': 4,
+  'nave': 4,
+  'nave comercial': 4,
+  'nave industrial': 4,
+  'parque industrial': 4,
+  'hotel': 5,
+  'hotelero': 5,
+  'motel': 5,
+  'glamping': 5,
+  'hostal': 5,
+  'hospital': 6,
+  'clínica': 6,
+  'residencia geriátrica': 6,
+  'lote': 7,
+  'terreno': 7,
+  'rancho': 7,
+  'hacienda': 7,
+  'finca': 7,
+};
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
 
@@ -31,8 +67,18 @@ const operacionMap: Record<string, number> = { venta: 1, renta: 2, preventa: 4 }
 const Properties = () => {
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState(() => searchParams.get('ubicacion') ?? '');
+  const [mobileView, setMobileView] = useState<'list' | 'map'>('map');
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const { properties, isLoading } = useProperties({ limit: 100 });
   const { site } = useSiteUser();
+
+  // Resize Mapbox canvas on view toggle
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [mobileView]);
 
   const mapboxToken = site?.platform_config?.mapbox_token ?? import.meta.env.VITE_MAPBOX_TOKEN ?? '';
 
@@ -44,16 +90,48 @@ const Properties = () => {
 
   const filtered = useMemo(() => {
     return properties.filter((p) => {
+      // Search
       if (search.trim()) {
         const q = search.toLowerCase();
-        const haystack = `${p.nombre} ${p.ciudad_nombre ?? ''} ${p.colonia ?? ''} ${p.estado_nombre ?? ''}`.toLowerCase();
+        const haystack = `${p.nombre} ${p.ciudad_nombre ?? ''} ${p.colonia ?? ''} ${p.estado_nombre ?? ''} ${p.descripcion ?? ''}`.toLowerCase();
         if (!haystack.includes(q)) return false;
       }
       if (urlTipo && p.tipo?.toLowerCase() !== urlTipo) return false;
       if (urlOperacion && operacionMap[urlOperacion] && p.id_tipo_accion !== operacionMap[urlOperacion]) return false;
+
+      // Price filter
+      const price = p.precio ?? 0;
+      if (filters.priceRange[0] > 0 && price < filters.priceRange[0]) return false;
+      if (filters.priceRange[1] < 500_000_000 && price > filters.priceRange[1]) return false;
+
+      // Property types filter
+      if (filters.types.length > 0) {
+        const tipo = (p.tipo ?? '').toLowerCase();
+        if (!filters.types.some((t) => tipo.includes(t))) return false;
+      }
+
+      // Vertical taxonomy filter
+      if (filters.verticalId !== null) {
+        const verticalOfProp = VERTICAL_ID_BY_TIPO[p.tipo?.toLowerCase() ?? ''] || null;
+        if (verticalOfProp !== filters.verticalId) return false;
+      }
+
+      // Bedrooms, bathrooms, parking, area
+      if (filters.bedrooms !== null && (p.habitaciones ?? 0) < filters.bedrooms) return false;
+      if (filters.bathrooms !== null && (p.banios ?? 0) < filters.bathrooms) return false;
+      if (filters.parking !== null && (p.estacionamientos ?? 0) < filters.parking) return false;
+      if (filters.areaRange[0] > 0 && (p.area ?? 0) < filters.areaRange[0]) return false;
+      if (filters.areaRange[1] < 100_000 && (p.area ?? 0) > filters.areaRange[1]) return false;
+
+      // Preventa
+      if (filters.preventa) {
+        const text = ((p.nombre ?? '') + ' ' + (p.descripcion ?? '') + ' ' + (p.caracteristicas ?? '')).toLowerCase();
+        if (!text.includes('preventa') && !text.includes('pre-venta')) return false;
+      }
+
       return true;
     });
-  }, [properties, search, urlTipo, urlOperacion]);
+  }, [properties, search, urlTipo, urlOperacion, filters]);
 
   const geocodedFiltered = useGeocodedProperties(filtered, mapboxToken);
 
@@ -83,7 +161,10 @@ const Properties = () => {
       {/* Main */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Lista */}
-        <aside className="w-full lg:w-[450px] xl:w-[500px] shrink-0 flex flex-col bg-white border-r border-[#f0f3f5] h-full shadow-xl z-20">
+        <aside className={cn(
+          "w-full lg:w-[450px] xl:w-[500px] shrink-0 flex flex-col bg-white border-r border-[#f0f3f5] h-full shadow-xl z-20 transition-all duration-300",
+          mobileView === 'map' ? "hidden lg:flex" : "flex"
+        )}>
           <div className="flex flex-col border-b border-[#f0f3f5] bg-white sticky top-0 z-30">
             <div className="px-5 pt-6 pb-4">
               <div className="relative">
@@ -130,7 +211,7 @@ const Properties = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f8fafb]">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f8fafb] pb-24 lg:pb-4">
             {isLoading ? (
               [1, 2, 3].map((i) => (
                 <div key={i} className="bg-white rounded-xl border border-gray-200 p-4 h-28 animate-pulse" />
@@ -192,11 +273,48 @@ const Properties = () => {
         </aside>
 
         {/* Mapa */}
-        <section className="flex-1 relative h-full">
-          <PropertyMap properties={mapProperties} mapboxToken={mapboxToken} initialCenter={initialCenter} />
+        <section className={cn(
+          "flex-1 relative h-full transition-all duration-300",
+          mobileView === 'list' ? "hidden lg:block" : "block"
+        )}>
+          {/* Barra de Filtros Flotante superior */}
+          <div className="absolute top-4 left-4 z-30 max-w-[92vw]">
+            <PropertyFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              resultCount={filtered.length}
+            />
+          </div>
 
-          {/* Botón flotante centrado en la parte inferior que navega a /listings */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+          <PropertyMap properties={mapProperties} mapboxToken={mapboxToken} initialCenter={initialCenter} />
+        </section>
+
+        {/* Controles flotantes en la parte inferior */}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2">
+          {/* Toggle móvil para cambiar entre Mapa y Lista */}
+          <div className="flex lg:hidden bg-[#002d43] border border-white/20 p-1 rounded-full shadow-2xl backdrop-blur-md">
+            <button
+              onClick={() => setMobileView('map')}
+              className={cn(
+                "px-5 py-2 rounded-full text-white text-xs font-bold uppercase tracking-wider transition-all",
+                mobileView === 'map' ? "bg-[#867027] shadow-sm" : "opacity-70 hover:opacity-100"
+              )}
+            >
+              Mapa
+            </button>
+            <button
+              onClick={() => setMobileView('list')}
+              className={cn(
+                "px-5 py-2 rounded-full text-white text-xs font-bold uppercase tracking-wider transition-all",
+                mobileView === 'list' ? "bg-[#867027] shadow-sm" : "opacity-70 hover:opacity-100"
+              )}
+            >
+              Lista
+            </button>
+          </div>
+
+          {/* Botón flotante desktop para ir a /listings */}
+          <div className="hidden lg:block">
             <Link
               to="/listings"
               className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#002d43] hover:bg-[#867027] text-white text-xs font-bold uppercase tracking-wider shadow-2xl backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-105 active:scale-95"
@@ -205,7 +323,7 @@ const Properties = () => {
               <span>Lista</span>
             </Link>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   );
