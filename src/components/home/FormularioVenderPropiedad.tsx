@@ -71,6 +71,16 @@ const TIPOS_PROPIEDAD = [
   { id: 9, label: "Nave Industrial" },
 ];
 
+const TIPOS_ACCION = [
+  { id: 1, label: "Venta" },
+  { id: 2, label: "Renta" },
+  { id: 3, label: "Traspaso" },
+  { id: 4, label: "Pre-Venta" },
+  { id: 5, label: "Aportación" },
+  { id: 6, label: "Remate" },
+  { id: 7, label: "Permuta" },
+];
+
 const TIPOS_RESIDENCIALES = new Set([1, 2, 7]);  // Casa, Departamento, Loft
 const TIPOS_COMERCIALES   = new Set([4, 5]);      // Oficina, Local Comercial
 const TIPOS_INDUSTRIALES  = new Set([6, 9]);      // Bodega, Nave Industrial
@@ -125,9 +135,13 @@ const step1Schema = z.object({
   telefono: z.string().min(10, "El teléfono debe tener al menos 10 dígitos"),
 });
 
+const step2Schema = z.object({
+  id_tipo_accion: z.number({ required_error: "Selecciona el tipo de operación" }).min(1, "Selecciona el tipo de operación"),
+});
+
 const step3Schema = z.object({
   id_tipo_propiedad: z.number({ required_error: "Selecciona el tipo de propiedad" }).min(1),
-  precio_propiedad: z.number({ required_error: "Ingresa el precio de venta" }).positive(),
+  precio_propiedad: z.number({ required_error: "Ingresa el precio" }).positive(),
   id_estado: z.number({ required_error: "Selecciona el estado" }).min(1),
   id_ciudad: z.number({ required_error: "Selecciona la ciudad" }).min(1),
   direccion: z.string().min(5, "Ingresa la dirección completa"),
@@ -153,6 +167,7 @@ const fullSchema = z.object({
   nombre_completo: z.string().min(3),
   email: z.string().email(),
   telefono: z.string().min(10),
+  id_tipo_accion: z.number().min(1),
   id_tipo_propiedad: z.number().min(1),
   precio_propiedad: z.number().positive(),
   id_estado: z.number().min(1),
@@ -202,7 +217,6 @@ export default function FormularioVenderPropiedad() {
   const [estados, setEstados] = useState<{ id_estado: number; nombre_estado: string }[]>([]);
   const [ciudades, setCiudades] = useState<{ id_ciudad: number; nombre_ciudad: string }[]>([]);
   const [loadingCiudades, setLoadingCiudades] = useState(false);
-  const CIUDADES_PERMITIDAS = new Set([20, 2479, 2480]);
 
   // Step 5 — Docs + amenidades
   const [esHerencia, setEsHerencia] = useState(false);
@@ -269,7 +283,7 @@ export default function FormularioVenderPropiedad() {
     setLoadingCiudades(true);
     setValue("id_ciudad", 0 as any);
     fetchCiudadesByEstado(watchedEstado)
-      .then((data) => setCiudades(data.filter((c) => CIUDADES_PERMITIDAS.has(c.id_ciudad))))
+      .then(setCiudades)
       .finally(() => setLoadingCiudades(false));
   }, [watchedEstado]);
 
@@ -278,6 +292,8 @@ export default function FormularioVenderPropiedad() {
   const validateCurrentStep = async (): Promise<boolean> => {
     if (currentStep === 1) return trigger(["nombre_completo", "email", "telefono"]);
     if (currentStep === 2) {
+      const validOperacion = await trigger(["id_tipo_accion"]);
+      if (!validOperacion) return false;
       if (images.length === 0) {
         toast.error("Agrega al menos una foto de la propiedad");
         return false;
@@ -406,6 +422,7 @@ export default function FormularioVenderPropiedad() {
         nombre_completo: data.nombre_completo,
         email: data.email,
         telefono: data.telefono,
+        id_tipo_accion: data.id_tipo_accion,
         titulo_propiedad: data.titulo_propiedad || undefined,
         id_tipo_propiedad: data.id_tipo_propiedad,
         precio_propiedad: data.precio_propiedad,
@@ -552,9 +569,28 @@ export default function FormularioVenderPropiedad() {
           </StepCard>
         )}
 
-        {/* ── STEP 2: Imágenes ─────────────────────────────────────────── */}
+        {/* ── STEP 2: Operación y Fotos ─────────────────────────────────── */}
         {currentStep === 2 && (
-          <StepCard title="Fotos de la propiedad" subtitle="Agrega imágenes que muestren bien tu inmueble">
+          <StepCard title="Operación y Fotos" subtitle="Selecciona la modalidad de tu propiedad y agrega imágenes que la muestren bien">
+            <div className="mb-6">
+              <Field label="Tipo de operación *" error={errors.id_tipo_accion?.message}>
+                <Select
+                  onValueChange={(val) => setValue("id_tipo_accion", Number(val), { shouldValidate: true })}
+                  value={watch("id_tipo_accion") ? String(watch("id_tipo_accion")) : ""}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona el tipo de operación" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIPOS_ACCION.map((a) => (
+                      <SelectItem key={a.id} value={String(a.id)}>
+                        {a.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
             <input
               ref={imageInputRef}
               type="file"
@@ -634,7 +670,7 @@ export default function FormularioVenderPropiedad() {
                 </Select>
               </Field>
 
-              <Field label="Precio de venta (MXN)" error={errors.precio_propiedad?.message}>
+              <Field label="Precio (MXN)" error={errors.precio_propiedad?.message}>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
                   <Input
