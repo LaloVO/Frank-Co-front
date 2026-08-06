@@ -26,7 +26,7 @@ export default function Desarrollos() {
           {/* Header */}
           <div className="mb-12">
             <h1 className="text-3xl md:text-5xl font-extrabold text-[#002d43] tracking-tight">
-              Desarrollos <span className="text-[#867027]">en Construcción</span>
+              Desarrollos
             </h1>
             <p className="text-gray-500 text-base mt-2 max-w-2xl">
               Explora nuestros desarrollos residenciales y comerciales de alto nivel.

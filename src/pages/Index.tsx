@@ -10,35 +10,23 @@ import {
   Bath,
   Square,
   ArrowRight,
-  Menu,
-  Star,
-  ChevronLeft,
-  ChevronRight,
   Facebook,
   Instagram,
-  Twitter
+  Twitter,
+  Layers
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useProperties } from '@/hooks/useProperties';
+import { usePropertyCatalog } from '@/hooks/usePropertyCatalog';
 import { useSiteUser } from '@/hooks/useSiteUser';
 import { formatPrice, actionLabel } from '@/lib/cbf';
 import { Header } from '@/components/layout/Header';
 import { AnimatedPropertySelector } from '@/components/home/AnimatedPropertySelector';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop';
-
-const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1600596542815-e32870110044?q=80&w=2500&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2500&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=2500&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2500&auto=format&fit=crop',
-];
-
-const operacionMap: Record<string, number> = { venta: 1, renta: 2, preventa: 4 };
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2500&auto=format&fit=crop';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { properties, isLoading } = useProperties({ limit: 4 });
+  const { developments, standaloneUnits, isLoading: loadingCatalog } = usePropertyCatalog();
   const { user, site } = useSiteUser();
 
   const [heroLocation, setHeroLocation] = useState('');
@@ -50,14 +38,12 @@ const Index = () => {
 
   const mapboxToken = (site?.platform_config?.mapbox_token ?? import.meta.env.VITE_MAPBOX_TOKEN ?? '').trim();
 
-  // Cierra sugerencias al hacer click fuera
   useEffect(() => {
     const close = () => setShowSuggestions(false);
     document.addEventListener('click', close);
     return () => document.removeEventListener('click', close);
   }, []);
 
-  // Fetch sugerencias con debounce mientras escribe
   useEffect(() => {
     if (!heroLocation.trim() || !mapboxToken) { setSuggestions([]); return; }
     if (selectedCoords && heroLocation === selectedCoords.name) return;
@@ -244,80 +230,98 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Propiedades Destacadas */}
-        <section className="py-24 px-4 md:px-10 bg-white">
+        {/* FILA 1: Desarrollos Exclusivos (is_unit === false) */}
+        <section className="py-20 px-4 md:px-10 bg-white border-b border-gray-100">
           <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-end mb-16">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
               <div>
-                <h2 className="text-3xl font-bold text-[#002d43]">Propiedades Destacadas</h2>
-                <p className="text-gray-500 mt-2">Selección curada de listados premium disponibles ahora.</p>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-[#002d43] tracking-tight">
+                  Desarrollos
+                </h2>
+                <p className="text-gray-500 mt-2 text-base max-w-2xl">
+                  Proyectos residenciales y comerciales en preventa y desarrollo.
+                </p>
               </div>
-              <Link to="/listings" className="hidden md:flex items-center gap-2 text-[#867027] font-bold hover:underline">
-                Ver todas las propiedades <ArrowRight className="size-4" />
+              <Link to="/desarrollos" className="flex items-center gap-2 text-[#867027] font-bold hover:underline shrink-0 text-sm">
+                Ver todos los desarrollos <ArrowRight className="size-4" />
               </Link>
             </div>
 
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="bg-gray-100 rounded-xl h-80 animate-pulse" />
+            {loadingCatalog ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-gray-100 rounded-2xl h-80 animate-pulse" />
                 ))}
               </div>
-            ) : properties.length === 0 ? (
-              <div className="text-center py-20">
-                <Building2 className="size-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg font-medium">Propiedades próximamente</p>
-                <p className="text-gray-400 text-sm mt-1">Estamos preparando nuestro catálogo</p>
+            ) : developments.length === 0 ? (
+              <div className="bg-[#f8fafb] rounded-2xl p-12 text-center border border-gray-100">
+                <Building2 className="size-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 text-lg font-semibold">Próximamente nuevos desarrollos</p>
+                <p className="text-gray-400 text-sm mt-1">Estamos preparando proyectos exclusivos para ti</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {properties.map((prop) => {
-                  const img = prop.imagenes_propiedades?.[0]?.image_url ?? FALLBACK_IMG;
-                  const label = actionLabel(prop.id_tipo_accion);
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {developments.slice(0, 3).map((dev) => {
+                  const img = dev.imagenes_propiedades?.[0]?.image_url ?? FALLBACK_IMG;
+                  const verticals = dev.development_verticals ?? [];
                   return (
                     <Link
-                      key={prop.id}
-                      to={`/propiedad/${prop.id}`}
-                      className="group bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1 block"
+                      key={dev.id}
+                      to={`/propiedad/${dev.id}`}
+                      className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1 block"
                     >
-                      <div className="relative aspect-[4/3] overflow-hidden">
-                        <div className="absolute top-3 left-3 bg-[#002d43]/90 text-white text-xs font-bold px-2 py-1 rounded z-10">
-                          {label.toUpperCase()}
-                        </div>
+                      <div className="relative aspect-[16/10] overflow-hidden">
                         <img
                           src={img}
-                          alt={prop.nombre}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          alt={dev.nombre}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                          <p className="text-white text-lg font-bold line-clamp-1">{prop.nombre}</p>
-                          <p className="text-gray-200 text-sm flex items-center gap-1">
-                            <MapPin className="size-3" />
-                            {prop.colonia ?? prop.ciudad_nombre ?? ''}
-                          </p>
+                        <div className="absolute top-3 left-3 bg-[#002d43]/90 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                          Desarrollo
                         </div>
+                        {dev.fromPrice != null && (
+                          <div className="absolute bottom-3 left-3 bg-[#002d43]/95 backdrop-blur-md text-white text-xs font-black px-3 py-1.5 rounded-full shadow-md">
+                            Desde {formatPrice(dev.fromPrice, dev.moneda)}
+                          </div>
+                        )}
                       </div>
-                      <div className="p-5 flex flex-col flex-grow">
-                        <div className="flex justify-between items-center mb-3">
-                          <span className="text-[#867027] text-xl font-bold">
-                            {formatPrice(prop.precio, prop.moneda)}
+
+                      <div className="p-6 flex flex-col flex-1 justify-between space-y-4">
+                        <div className="space-y-2">
+                          {verticals.length > 0 && (
+                            <div className="flex gap-1.5 flex-wrap">
+                              {verticals.map((v) => (
+                                <span key={v} className="inline-flex items-center gap-1 text-xs font-semibold text-[#867027] bg-[#867027]/10 px-2.5 py-0.5 rounded-full">
+                                  <Layers className="size-3" />
+                                  {v}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          <h3 className="text-xl font-bold text-[#002d43] group-hover:text-[#867027] transition-colors line-clamp-1">
+                            {dev.nombre}
+                          </h3>
+
+                          {(dev.ciudad_nombre || dev.colonia) && (
+                            <p className="text-xs text-gray-500 flex items-center gap-1">
+                              <MapPin className="size-3.5 text-[#867027]" />
+                              {[dev.colonia, dev.ciudad_nombre, dev.estado_nombre].filter(Boolean).join(', ')}
+                            </p>
+                          )}
+
+                          {dev.descripcion && (
+                            <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed pt-1">
+                              {dev.descripcion}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between border-t border-gray-100 pt-4 text-xs font-semibold text-[#002d43]">
+                          <span>{dev.unitCount > 0 ? `${dev.unitCount} unidades disponibles` : 'Preventa'}</span>
+                          <span className="text-[#867027] font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Ver desarrollo <ArrowRight className="size-3.5" />
                           </span>
-                        </div>
-                        <div className="flex gap-4 text-gray-500 text-sm mb-4 border-b border-gray-100 pb-4">
-                          {prop.habitaciones != null && (
-                            <span className="flex items-center gap-1"><Bed className="size-4" /> {prop.habitaciones}</span>
-                          )}
-                          {prop.banios != null && (
-                            <span className="flex items-center gap-1"><Bath className="size-4" /> {prop.banios}</span>
-                          )}
-                          {prop.area != null && (
-                            <span className="flex items-center gap-1"><Square className="size-4" /> {prop.area}m²</span>
-                          )}
-                        </div>
-                        <div className="mt-auto">
-                          <Button variant="outline" className="w-full border-[#002d43] text-[#002d43] hover:bg-[#002d43] hover:text-white transition-colors">
-                            Ver Detalles
-                          </Button>
                         </div>
                       </div>
                     </Link>
@@ -325,14 +329,103 @@ const Index = () => {
                 })}
               </div>
             )}
+          </div>
+        </section>
 
-            <div className="mt-12 text-center">
-              <Link to="/listings">
-                <Button variant="outline" className="border-2 border-[#002d43] text-[#002d43] hover:bg-[#002d43] hover:text-white font-bold gap-2">
-                  Ver todos los listados
-                </Button>
+        {/* FILA 2: Propiedades Individuales (SOLO standalone: is_unit === true && parent_id == null) */}
+        <section className="py-20 px-4 md:px-10 bg-[#f8fafb]">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-[#002d43] tracking-tight">
+                  Propiedades <span className="text-[#867027]">Individuales</span>
+                </h2>
+                <p className="text-gray-500 mt-2 text-base max-w-2xl">
+                  Residencias y propiedades independientes creadas directamente como unidades.
+                </p>
+              </div>
+              <Link to="/listings" className="flex items-center gap-2 text-[#867027] font-bold hover:underline shrink-0 text-sm">
+                Ver todas las propiedades <ArrowRight className="size-4" />
               </Link>
             </div>
+
+            {loadingCatalog ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-gray-100 rounded-2xl h-80 animate-pulse" />
+                ))}
+              </div>
+            ) : standaloneUnits.length === 0 ? (
+              <div className="bg-white rounded-2xl p-12 text-center border border-gray-100">
+                <Building2 className="size-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 text-lg font-semibold">Propiedades próximamente</p>
+                <p className="text-gray-400 text-sm mt-1">Estamos preparando nuestro catálogo de propiedades individuales</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {standaloneUnits.slice(0, 3).map((prop) => {
+                  const img = prop.imagenes_propiedades?.[0]?.image_url ?? FALLBACK_IMG;
+                  const label = actionLabel(prop.id_tipo_accion);
+                  return (
+                    <Link
+                      key={prop.id}
+                      to={`/propiedad/${prop.id}`}
+                      className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1 block"
+                    >
+                      <div className="relative aspect-[16/10] overflow-hidden">
+                        <img
+                          src={img}
+                          alt={prop.nombre}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute top-3 left-3 bg-[#867027] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                          {label}
+                        </div>
+                        <div className="absolute bottom-3 left-3 bg-[#002d43]/95 backdrop-blur-md text-white text-xs font-black px-3 py-1.5 rounded-full shadow-md">
+                          {formatPrice(prop.precio, prop.moneda)}
+                        </div>
+                      </div>
+
+                      <div className="p-6 flex flex-col flex-1 justify-between space-y-4">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-bold text-[#002d43] group-hover:text-[#867027] transition-colors line-clamp-1">
+                            {prop.nombre}
+                          </h3>
+
+                          {(prop.ciudad_nombre || prop.colonia) && (
+                            <p className="text-xs text-gray-500 flex items-center gap-1">
+                              <MapPin className="size-3.5 text-[#867027]" />
+                              {[prop.colonia, prop.ciudad_nombre, prop.estado_nombre].filter(Boolean).join(', ')}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex gap-4 text-xs font-semibold text-gray-500 pt-3 border-t border-gray-100">
+                            {prop.habitaciones != null && (
+                              <span className="flex items-center gap-1"><Bed className="size-3.5 text-[#867027]" /> {prop.habitaciones} Recs</span>
+                            )}
+                            {prop.banios != null && (
+                              <span className="flex items-center gap-1"><Bath className="size-3.5 text-[#867027]" /> {prop.banios} Baños</span>
+                            )}
+                            {prop.area != null && (
+                              <span className="flex items-center gap-1"><Square className="size-3.5 text-[#867027]" /> {prop.area} m²</span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs pt-1">
+                            <span className="font-bold text-[#002d43]">Propiedad Individual</span>
+                            <span className="text-[#867027] font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                              Ver detalles <ArrowRight className="size-3.5" />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
