@@ -143,10 +143,10 @@ const PropertyDetail = () => {
         {/* Header Title Block */}
         <div className="flex flex-wrap justify-between items-end gap-6 mb-8">
           <div className="flex flex-col gap-3">
+            <h1 className="text-[#002d43] text-3xl md:text-5xl font-extrabold tracking-tight">
+              {property.nombre}
+            </h1>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-[#002d43] text-3xl md:text-5xl font-extrabold tracking-tight">
-                {property.nombre}
-              </h1>
               <span className="px-3.5 py-1 bg-[#002d43] text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-sm">
                 {badge}
               </span>
@@ -739,4 +739,3 @@ const PropertyDetail = () => {
 };
 
 export default PropertyDetail;
-

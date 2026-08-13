@@ -127,7 +127,11 @@ export function AnimatedPropertySelector() {
               : 'border-white/50'
           )}
         >
-          <div className="flex justify-between items-start mb-1.5">
+          <h3 className="font-bold text-[#002d43] text-sm md:text-base leading-tight">
+            {currentProp.title}
+          </h3>
+
+          <div className="mt-2 flex justify-between items-start mb-1.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#867027] bg-[#867027]/10 px-2 py-0.5 rounded">
               {currentProp.tag}
             </span>
@@ -135,10 +139,6 @@ export function AnimatedPropertySelector() {
               {currentProp.price}
             </span>
           </div>
-
-          <h3 className="font-bold text-[#002d43] text-sm md:text-base leading-tight">
-            {currentProp.title}
-          </h3>
 
           <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
             <MapPin className="size-3 text-[#867027]" />

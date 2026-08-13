@@ -10,7 +10,9 @@ import PropertyListings from "./pages/PropertyListings";
 import SolicitaInmueble from "./pages/SolicitaInmueble";
 import Desarrollos from "./pages/Desarrollos";
 import VenderPropiedad from "./pages/VenderPropiedad";
+import Servicios from "./pages/Servicios";
 import NotFound from "./pages/NotFound";
+import { WhatsAppButton } from "./components/layout/WhatsAppButton";
 
 const queryClient = new QueryClient();
 
@@ -25,13 +27,16 @@ const App = () => (
           <Route path="/desarrollos" element={<Desarrollos />} />
           <Route path="/vender-propiedad" element={<VenderPropiedad />} />
           <Route path="/propiedades" element={<Properties />} />
+          <Route path="/mapa" element={<Properties />} />
           <Route path="/propiedad/:id" element={<PropertyDetail />} />
           <Route path="/properties/:id" element={<PropertyDetail />} />
           <Route path="/listings" element={<PropertyListings />} />
           <Route path="/solicita-inmueble" element={<SolicitaInmueble />} />
+          <Route path="/servicios" element={<Servicios />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <WhatsAppButton />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

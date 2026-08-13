@@ -143,12 +143,12 @@ export const DestinationSection = () => {
 
             {/* Header */}
             <div className="text-center mb-16 z-10">
-                <h5 className="text-[#e0a929] font-bold tracking-[0.2em] text-xs uppercase mb-4 animate-fade-in">
-                    {t('hero.destination_subtitle')}
-                </h5>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white tracking-tight leading-tight animate-slide-up">
                     {t('hero.destination_title')}
                 </h1>
+                <p className="mt-4 text-[#e0a929] font-bold tracking-[0.2em] text-xs uppercase animate-fade-in">
+                    {t('hero.destination_subtitle')}
+                </p>
             </div>
 
             {/* Cards Grid */}
@@ -171,14 +171,14 @@ export const DestinationSection = () => {
 
                         {/* Content */}
                         <div className="absolute inset-0 p-8 flex flex-col justify-end items-center text-center">
+                            <h3 className="text-3xl font-medium text-white mb-2 group-hover:text-[#e0a929] transition-colors">
+                                {country.name}
+                            </h3>
                             <span className="text-xs font-bold tracking-widest uppercase text-gray-300 mb-2 border-b border-[#e0a929]/50 pb-1">
                                 {country.region === "North America" ? t('destinations.north_america') :
                                     country.region === "Latin America" ? t('destinations.latin_america') :
                                         t('destinations.caribbean')}
                             </span>
-                            <h3 className="text-3xl font-medium text-white mb-2 group-hover:text-[#e0a929] transition-colors">
-                                {country.name}
-                            </h3>
 
                             {/* States Hint */}
                             <div className="h-8 overflow-hidden">
@@ -206,12 +206,12 @@ export const DestinationSection = () => {
                     <div className="bg-[#1a1a1a]/95 backdrop-blur-xl border-2 border-[#e0a929]/20 rounded-2xl p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
                         {/* Header */}
                         <div className="text-center mb-8 pb-6 border-b border-white/10">
-                            <h4 className="text-[#e0a929] font-bold tracking-[0.2em] text-xs uppercase mb-2">
-                                {t('destinations.select_region')}
-                            </h4>
                             <h3 className="text-2xl md:text-3xl font-light text-white">
                                 {selectedCountry.name}
                             </h3>
+                            <p className="mt-2 text-[#e0a929] font-bold tracking-[0.2em] text-xs uppercase">
+                                {t('destinations.select_region')}
+                            </p>
                         </div>
 
                         {/* States Grid */}

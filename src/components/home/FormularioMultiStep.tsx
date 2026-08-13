@@ -44,10 +44,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { submitLead, fetchBusySlots } from "@/lib/cbf";
 
-const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string) || "https://nxouqoyppkiqrhfzovny.supabase.co";
-const SUPABASE_ANON_KEY = (import.meta.env.VITE_SUPABASE_ANON_KEY as string) || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54b3Vxb3lwcGtpcXJoZnpvdm55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDQxODMsImV4cCI6MjA5NDI4MDE4M30.zDlAxuD-YISh93Y4CWTWuJJP9HAWlPru32MbAfc3dtA";
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string) || "";
+const SUPABASE_ANON_KEY = (import.meta.env.VITE_SUPABASE_ANON_KEY as string) || "";
 
 async function uploadFileToSupabase(file: File, email: string, docId: string): Promise<string> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error("La carga de documentos requiere configuración autorizada");
+  }
   const emailSanitized = email.toLowerCase().replace(/[^a-z0-9]/g, "_");
   const sanitizedFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
   const path = `leads/${emailSanitized}/${docId}/${sanitizedFileName}`;

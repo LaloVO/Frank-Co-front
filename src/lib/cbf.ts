@@ -9,11 +9,11 @@ const getBaseUrl = () => {
       return "http://localhost:3000/api/cbf";
     }
   }
-  return "https://homepty-cbf-tite-testing-chi.vercel.app/api/cbf"; // fallback producción
+  return "";
 };
 
 const BASE_URL = getBaseUrl();
-const API_KEY = (import.meta.env.VITE_CBF_API_KEY as string) || "cbf_live_WjaEj-7Jpc9DEgmNChSBOUH35inuqzfV";
+const API_KEY = (import.meta.env.VITE_CBF_API_KEY as string) || "cbf_live_PENDING_UUID";
 
 export interface CBFImage {
   image_url: string;
@@ -66,10 +66,15 @@ export interface CBFSite {
   platform_config?: { mapbox_token?: string | null };
 }
 
-const headers = () => ({
-  Authorization: `Bearer ${API_KEY}`,
-  "Content-Type": "application/json",
-});
+const headers = () => {
+  if (!BASE_URL || API_KEY === "cbf_live_PENDING_UUID") {
+    throw new Error("La conexión CBF requiere configuración autorizada");
+  }
+  return {
+    Authorization: `Bearer ${API_KEY}`,
+    "Content-Type": "application/json",
+  };
+};
 
 export async function fetchSiteUser(): Promise<{ user: CBFUser; site: CBFSite }> {
   const res = await fetch(`${BASE_URL}/user`, { headers: headers() });

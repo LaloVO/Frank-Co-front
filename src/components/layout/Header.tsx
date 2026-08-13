@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Building2 } from 'lucide-react';
+import { Menu, X, Building2, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useSiteUser } from '@/hooks/useSiteUser';
@@ -10,6 +10,7 @@ const navigation = [
   { name: 'Desarrollos', href: '/desarrollos' },
   { name: 'Propiedades', href: '/propiedades' },
   { name: 'Portafolio', href: '/listings' },
+  { name: 'Servicios', href: '/servicios' },
 ];
 
 export function Header() {
@@ -17,27 +18,20 @@ export function Header() {
   const location = useLocation();
   const { user, site } = useSiteUser();
 
-  const handleContactClick = () => {
-    if (user?.telefono_usuario) {
-      const waNumber = user.telefono_usuario.replace(/\D/g, '');
-      window.open(`https://wa.me/${waNumber}`, '_blank', 'noopener,noreferrer');
-    }
-  };
-
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
       <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <Link to="/" className="flex min-h-11 min-w-0 items-center gap-2 hover:opacity-90 transition-opacity lg:mr-10">
             <Building2 className="size-8 text-[#002d43]" />
-            <h2 className="text-[#002d43] text-xl font-bold uppercase tracking-tight font-sans">
+            <h2 className="truncate text-[#002d43] text-lg xl:text-xl font-bold uppercase tracking-tight font-sans">
               Frank & Co. <span className="text-[#867027]">Consultores</span>
             </h2>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -55,7 +49,7 @@ export function Header() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3 ml-auto">
             <Button
               variant="outline"
               asChild
@@ -63,17 +57,31 @@ export function Header() {
             >
               <Link to="/vender-propiedad">Vender propiedad</Link>
             </Button>
-            <Button
-              onClick={handleContactClick}
-              className="bg-[#002d43] hover:bg-[#867027] text-white rounded-full px-6 transition-all duration-300 font-sans text-sm font-semibold shadow-md"
+
+            {/* Social Links */}
+            <a
+              href="https://www.facebook.com/profile.php?id=61584824315314"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-[#002d43] hover:text-[#867027] transition-colors"
+              aria-label="Facebook"
             >
-              Contactar
-            </Button>
+              <Facebook size={20} />
+            </a>
+            <a
+              href="https://www.instagram.com/frankco.consultores/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-[#002d43] hover:text-[#867027] transition-colors"
+              aria-label="Instagram"
+            >
+              <Instagram size={20} />
+            </a>
           </div>
 
           {/* Mobile menu button */}
           <button
-            className="lg:hidden p-2 text-[#002d43] hover:text-[#867027] transition-colors focus:outline-none"
+            className="lg:hidden min-h-11 min-w-11 p-2 text-[#002d43] hover:text-[#867027] transition-colors focus:outline-none"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Abrir menú"
           >
@@ -109,15 +117,6 @@ export function Header() {
                   <Link to="/vender-propiedad" onClick={() => setIsOpen(false)}>
                     Vender propiedad
                   </Link>
-                </Button>
-                <Button
-                  onClick={() => {
-                    setIsOpen(false);
-                    handleContactClick();
-                  }}
-                  className="bg-[#002d43] hover:bg-[#867027] text-white rounded-full w-full justify-center font-semibold"
-                >
-                  Contactar
                 </Button>
               </div>
             </div>

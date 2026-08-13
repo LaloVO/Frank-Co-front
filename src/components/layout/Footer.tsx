@@ -14,6 +14,7 @@ const footerLinks = {
     { name: 'República Dominicana', href: '/propiedades?pais=DO' },
   ],
   recursos: [
+    { name: 'Servicios', href: '/servicios' },
     { name: 'Centro Educativo', href: '/hub' },
     { name: 'Videos', href: '/videos' },
     { name: 'Blog', href: '/hub' },
@@ -26,11 +27,8 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Facebook, href: '#', label: 'Facebook' },
-  { icon: Instagram, href: '#', label: 'Instagram' },
-  { icon: Twitter, href: '#', label: 'Twitter' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn' },
-  { icon: Youtube, href: '#', label: 'YouTube' },
+  { icon: Facebook, href: 'https://www.facebook.com/profile.php?id=61584824315314', label: 'Facebook' },
+  { icon: Instagram, href: 'https://www.instagram.com/frankco.consultores/', label: 'Instagram' },
 ];
 
 export function Footer() {
