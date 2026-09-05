@@ -21,6 +21,7 @@ import { useSiteUser } from '@/hooks/useSiteUser';
 import { formatPrice, actionLabel } from '@/lib/cbf';
 import { Header } from '@/components/layout/Header';
 import { AnimatedPropertySelector } from '@/components/home/AnimatedPropertySelector';
+import ValuationWidget from '@/components/home/ValuationWidget';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2500&auto=format&fit=crop';
 
@@ -457,6 +458,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Módulo Inteligencia — Valuación con el Brain */}
+        <ValuationWidget />
       </main>
 
       {/* Footer */}

@@ -6,7 +6,7 @@ const getBaseUrl = () => {
   
   if (typeof window !== "undefined") {
     if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-      return "http://localhost:3000/api/cbf";
+      return "http://localhost:8080/api/cbf";
     }
   }
   return "";
@@ -199,4 +199,70 @@ export function actionLabel(id?: number): string {
     6: "Remate"
   };
   return id ? (map[id] ?? "Venta") : "Venta";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Módulo Inteligencia — Valuación con el Brain (vía madre nodriza)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface ValuationRequest {
+  lat: number;
+  lon: number;
+  direccion: string;
+  tipo_inmueble?: number; // 2=Casa, 3=Casa en Condominio, 4=Departamento
+  superficie_construida?: number;
+  tamano_terreno?: number;
+  habitaciones?: number;
+  banos?: number;
+  estacionamientos?: number;
+  vivienda_nueva_usada?: "Nueva" | "Usada";
+  antiguedad_anos?: number;
+  estado_conservacion?: "malo" | "regular" | "bueno" | "excelente";
+  radius?: number;
+  clase_inmueble?: number;
+  cvegeo?: string;
+}
+
+export interface ValuationExplanation {
+  summary: string;
+  keyInsights: string[];
+  recommendations: string[];
+  riskFactors: string[];
+  opportunities: string[];
+  confidence: number;
+}
+
+export interface ValuationResult {
+  valor: number;
+  valor_m2: number | null;
+  rango: [number, number];
+  confidence: number;
+  explanation: ValuationExplanation | null;
+  comparables: number;
+  status: "estimated" | "insufficient_comparables";
+  search_params?: Record<string, unknown>;
+}
+
+export interface ValuationResponse {
+  success: boolean;
+  data?: ValuationResult;
+  code?: "INSUFFICIENT_COMPARABLES";
+  message?: string;
+  comparableCount?: number;
+  suggestedNextSteps?: string[];
+}
+
+export async function submitValuation(
+  request: ValuationRequest
+): Promise<ValuationResponse> {
+  const res = await fetch(`${BASE_URL}/intelligence/valuation`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify(request),
+  });
+  if (!res.ok) {
+    const errorJson = await res.json().catch(() => ({}));
+    throw new Error(errorJson.error || "Error al obtener la valuación");
+  }
+  return res.json();
 }
