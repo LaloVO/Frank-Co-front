@@ -46,9 +46,6 @@ import { useSiteUser } from "@/hooks/useSiteUser";
 import {
   uploadSellerFile,
   submitSellerInquiry,
-  insertSellerImages,
-  insertSellerDocuments,
-  insertSellerAmenidades,
   fetchEstados,
   fetchCiudadesByEstado,
   fetchAmenidades,
@@ -351,7 +348,7 @@ export default function FormularioVenderPropiedad() {
     if (!file || !user?.id) return;
     setUploadingDocs((prev) => ({ ...prev, [docId]: true }));
     try {
-      const url = await uploadSellerFile(file, user.id, "seller-inquiry-docs");
+      const url = await uploadSellerFile(file, "seller-inquiry-docs");
       setDocumentosUrls((prev) => {
         const updated = { ...prev, [docId]: url };
         setValue("documentos_urls", updated);
@@ -400,10 +397,10 @@ export default function FormularioVenderPropiedad() {
         : null;
 
       // Upload images
-      const uploadedImages: { image_url: string; nombre_imagen: string; orden: number }[] = [];
+      const uploadedImages: { path: string; nombre_imagen: string; orden: number }[] = [];
       for (let i = 0; i < images.length; i++) {
-        const url = await uploadSellerFile(images[i].file, user.id, "seller-inquiry-images");
-        uploadedImages.push({ image_url: url, nombre_imagen: images[i].file.name, orden: i });
+        const url = await uploadSellerFile(images[i].file, "seller-inquiry-images");
+        uploadedImages.push({ path: url, nombre_imagen: images[i].file.name, orden: i });
       }
 
       // Build documents list from uploaded docs
@@ -412,13 +409,12 @@ export default function FormularioVenderPropiedad() {
         .filter((d) => data.documentos_urls?.[d.id])
         .map((d) => ({
           nombre_documento: d.label,
-          file_url: data.documentos_urls![d.id],
+          path: data.documentos_urls![d.id],
           required: d.required,
         }));
 
       // Insert seller inquiry
-      const inquiry = await submitSellerInquiry({
-        advisor_user_id: user.id,
+      await submitSellerInquiry({
         nombre_completo: data.nombre_completo,
         email: data.email,
         telefono: data.telefono,
@@ -446,13 +442,10 @@ export default function FormularioVenderPropiedad() {
         descripcion_estado_propiedad: data.descripcion_estado_propiedad || undefined,
         descripcion_inversion_propiedad: data.descripcion_inversion_propiedad || undefined,
         es_herencia: esHerencia,
+        imagenes: uploadedImages,
+        documentos: uploadedDocs,
+        amenidades: selectedAmenidades,
       });
-
-      await Promise.all([
-        insertSellerImages(inquiry.id, uploadedImages),
-        insertSellerDocuments(inquiry.id, uploadedDocs),
-        insertSellerAmenidades(inquiry.id, selectedAmenidades),
-      ]);
 
       localStorage.removeItem(STORAGE_KEY);
       setSubmitted(true);
